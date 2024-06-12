@@ -1,0 +1,26 @@
+name "main"
+targetType "library"
+toolchainRequirements ldc=">=1.38.0" dmd="no" gdc="no"
+
+versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion" "DRuntimeClassesAndTypeInfo" "DRuntimeExceptions" "DRuntimeExceptionsImplSimpleNoCatch"
+
+dflags "--linkonce-templates" "--preview=in" "--preview=bitfields" "--preview=fixImmutableConv" platform="ldc"
+
+buildType "debug" {
+    buildOptions "debugMode" "debugInfo"
+}
+
+buildType "unittest" {
+    buildOptions "debugMode" "debugInfo" "unittests"
+    postBuildCommands "clang libmain.a -otest " "./test"
+}
+
+buildType "release-assert" {
+    buildOptions "releaseMode" "inline" "optimize"
+    buildRequirements "requireContracts"
+}
+
+buildType "release-debug-assert" {
+    buildOptions "releaseMode" "inline" "optimize" "debugInfo"
+    buildRequirements "requireContracts"
+}
