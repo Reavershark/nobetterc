@@ -1,31 +1,12 @@
 #!/usr/bin/env rdmd
 import std;
 
-static immutable VersionSets = [
-    [
-        "DRuntimeAssertion",
-        "DRuntimeExternLibcFuncs",
-    ],
-    [
-        "DRuntimeAssertion",
-        "DRuntimeClassesAndTypeInfo",
-        "DRuntimeExternLibcFuncs",
-    ],
-    [
-        "DRuntimeAssertion",
-        "DRuntimeClassesAndTypeInfo",
-        "DRuntimeExceptions",
-        "DRuntimeExceptionsImplSimpleNoCatch",
-        "DRuntimeExternLibcFuncs",
-    ],
-];
-
 void main()
 {
-    foreach (versionSet; VersionSets)
+    foreach (config; ["minimal", "classes", "classes-exceptions"])
     {
-        writefln!"Testing %s"(versionSet);
-        auto pid = spawnShell(format!"dub build --force --build=unittest %(--d-version=%s %)"(versionSet));
+        writefln!"Testing configuration %s"(config);
+        auto pid = spawnShell(format!"dub build --config=%s --build=unittest --force"(config));
         enforce(pid.wait == 0);
     }
 }

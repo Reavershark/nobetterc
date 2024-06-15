@@ -2,36 +2,7 @@ module ministd.heap;
 
 // import core.lifetime;
 // 
-// @safe:
-// 
-// T* dalloc(T)() @trusted
-// {
-//     ubyte* ptr = cast(ubyte*) malloc(T.sizeof);
-//     assert(ptr, "dalloc: malloc failed");
-//     foreach (ref b; ptr[0 .. T.sizeof])
-//         b = 0;
-//     return cast(T*) ptr;
-// }
-// 
-// T[] dallocArray(T)(size_t length, ubyte initValue = 0) @trusted
-// {
-//     ubyte* ptr = cast(ubyte*) malloc(T.sizeof * length);
-//     assert(ptr, "dallocArray: malloc failed");
-//     ubyte[] slice = ptr[0 .. T.sizeof * length];
-//     foreach (ref b; slice)
-//         b = initValue;
-//     return cast(T[]) slice;
-// }
-// 
-// void dfree(T)(T* t) @trusted
-// {
-//     free(cast(void*) t);
-// }
-// 
-// void dfree(T)(T[] t) @trusted
-// {
-//     free(cast(void*) t.ptr);
-// }
+// @safe @nogc:
 // 
 // T* move(T)(ref T* ptr)
 // {

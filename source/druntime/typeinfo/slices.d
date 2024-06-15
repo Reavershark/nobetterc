@@ -117,30 +117,7 @@ const pure nothrow:
     override @trusted
     int compare(in void* p1, in void* p2)
     {
-        template cmp3()
-        {
-            // Three-way compare for integrals: negative if `lhs < rhs`, positive if `lhs > rhs`, 0 otherwise.
-            pragma(inline, true)
-            int cmp3(T)(const T lhs, const T rhs) if (__traits(isIntegral, T))
-            {
-                static if (T.sizeof < int.sizeof) // Taking the difference will always fit in an int.
-                    return int(lhs) - int(rhs);
-                else
-                    return (lhs > rhs) - (lhs < rhs);
-            }
-
-            // Three-way compare for real fp types. NaN is smaller than all valid numbers.
-            // Code is small and fast, see https://godbolt.org/z/fzb877
-            pragma(inline, true)
-            int cmp3(T)(const T d1, const T d2)
-                    if (is(T == float) || is(T == double) || is(T == real))
-            {
-                if (d2 != d2)
-                    return d1 == d1; // 0 if both ar NaN, 1 if d1 is valid and d2 is NaN.
-                // If d1 is NaN, both comparisons are false so we get -1, as needed.
-                return (d1 > d2) - !(d1 >= d2);
-            }
-        }
+        import druntime.comparison : cmp3;
 
         // Can't reuse __cmp in object.d because that handles NaN differently.
         // (Q: would it make sense to unify behaviors?)

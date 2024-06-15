@@ -2,12 +2,29 @@ name "main"
 targetType "library"
 toolchainRequirements ldc=">=1.38.0" dmd="no" gdc="no"
 
-versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion" "DRuntimeClassesAndTypeInfo" "DRuntimeExceptions" "DRuntimeExceptionsImplSimpleNoCatch"
 
-dflags "--linkonce-templates" "--preview=in" "--preview=bitfields" "--preview=fixImmutableConv" platform="ldc"
+dflags \
+    "--linkonce-templates" \
+    "--preview=in" "--preview=bitfields" "--preview=fixImmutableConv" \
+    "--fno-moduleinfo"
+
+configuration "minimal" {
+    versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion"
+    dflags "--fno-rtti" "--fno-exceptions"
+}
+
+configuration "classes" {
+    versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion" "DRuntimeClassesAndTypeInfo"
+    dflags "--fno-exceptions"
+}
+
+configuration "classes-exceptions" {
+    versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion" "DRuntimeClassesAndTypeInfo" "DRuntimeExceptions" "DRuntimeExceptionsImplSimpleNoCatch"
+}
 
 buildType "debug" {
     buildOptions "debugMode" "debugInfo"
+    postBuildCommands "clang libmain.a -omain " "./main"
 }
 
 buildType "unittest" {

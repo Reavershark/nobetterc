@@ -2,13 +2,18 @@ module druntime.slices.comparison;
 
 import druntime.libc_funcs : memcmp;
 
+import core.internal.string : dstrcmp;
+import core.internal.traits : Unqual;
+
 @safe @nogc:
 
 /**
  * Compares 2 slices.
  * Every comparison operator for 2 slices is implemented using this template.
  */
-int __cmp(T)(in T[] lhs, in T[] rhs) @trusted if (__traits(isScalar, T))
+@trusted pure nothrow
+int __cmp(T)(in T[] lhs, in T[] rhs) //
+if (__traits(isScalar, T))
 {
     // Compute U as the implementation type for T
     static if (is(T == ubyte) || is(T == void) || is(T == bool))
@@ -28,8 +33,6 @@ int __cmp(T)(in T[] lhs, in T[] rhs) @trusted if (__traits(isScalar, T))
 
     static if (is(U == char))
     {
-        import core.internal.string : dstrcmp;
-
         return dstrcmp(cast(char[]) lhs, cast(char[]) rhs);
     }
     else static if (!is(U == T))
@@ -81,11 +84,10 @@ int __cmp(T)(in T[] lhs, in T[] rhs) @trusted if (__traits(isScalar, T))
 }
 
 /// ditto
-int __cmp(T1, T2)(T1[] s1, T2[] s2)
-        if (!__traits(isScalar, T1) && !__traits(isScalar, T2))
+pure nothrow
+int __cmp(T1, T2)(T1[] s1, T2[] s2) //
+if (!__traits(isScalar, T1) && !__traits(isScalar, T2))
 {
-    import core.internal.traits : Unqual;
-
     alias U1 = Unqual!T1;
     alias U2 = Unqual!T2;
 

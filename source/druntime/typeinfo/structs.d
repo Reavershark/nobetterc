@@ -6,6 +6,8 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 
 mixin template TypeInfo_StructClassBody()
 {
+    import druntime.libc_funcs : memcmp;
+
 @safe @nogc:
 
     enum StructFlags : uint
@@ -75,8 +77,6 @@ pure nothrow:
     override @system
     int compare(in void* p1, in void* p2)
     {
-        import core.stdc.string : memcmp;
-
         // Regard null references as always being "less than"
         if (p1 != p2)
         {
@@ -101,8 +101,6 @@ pure nothrow:
     override @system
     bool equals(in void* p1, in void* p2)
     {
-        import core.stdc.string : memcmp;
-
         if (!p1 || !p2)
             return false;
         else if (xopEquals)

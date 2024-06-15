@@ -1,5 +1,7 @@
 module druntime.hashing;
 
+static import core.internal.hash;
+
 @safe @nogc pure nothrow:
 
 /** 
@@ -9,9 +11,8 @@ module druntime.hashing;
  */
 size_t hashOf(T)(in T value, size_t seed = 0)
 {
-    static import core.internal.hash;
-
-    return core.internal.hash.hashOf(value, seed);
+    // TODO
+    return 0;
 }
 
 version (DRuntimeClassesAndTypeInfo)

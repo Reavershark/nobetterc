@@ -10,6 +10,8 @@ enum string[] modules = [
     "druntime.classes.casting",
     "druntime.classes.comparison",
     "druntime.classes.object_class",
+    "druntime.comparison",
+    "druntime.destroy",
     "druntime.exceptions",
     "druntime.exceptions.base_classes",
     "druntime.exceptions.functions",
@@ -23,6 +25,7 @@ enum string[] modules = [
     "druntime.typeinfo.enums_tuples",
     "druntime.typeinfo.functions",
     "druntime.typeinfo.pointers",
+    "druntime.typeinfo.primitives",
     "druntime.typeinfo.slices",
     "druntime.typeinfo.static_arrays",
     "druntime.typeinfo.structs",
@@ -35,34 +38,35 @@ enum string[] modules = [
     "object",
 ];
 
+nothrow @nogc
 string testName(alias test)()
 {
-	string name = __traits(identifier, test);
+    string name = __traits(identifier, test);
 
-	foreach (alias attribute; __traits(getAttributes, test))
+    foreach (alias attribute; __traits(getAttributes, test))
     {
-		static if (is(typeof(attribute) : string))
+        static if (is(typeof(attribute) : string))
         {
-			name = attribute;
-			break;
-		}
-	}
+            name = attribute;
+            break;
+        }
+    }
 
-	return name;
+    return name;
 }
 
 extern (C)
 void main()
 {
     // dfmt off
-    static foreach (enum moduleString; modules)
+    static foreach (enum string moduleString; modules)
     {{
         printf("Running unittests for module %s:\n", &moduleString[0]);
         alias tests = __traits(getUnitTests, imported!moduleString);
         static foreach (alias test; tests)
         {{
             printf("- Running unittest %s: ", &testName!test[0]);
-            test();
+            (() @trusted => test())();
             printf("success\n");
         }}
     }}

@@ -10,6 +10,4 @@ else:
 extern (C)
 void main()
 {
-    class C{}
-    C c = new C();
 }
