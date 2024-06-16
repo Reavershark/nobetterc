@@ -2,6 +2,8 @@ module test.run_tests;
 
 version (unittest)  :  //
 
+import ministd.string : TermColor;
+
 @safe:
 
 enum string[] modules = [
@@ -64,13 +66,27 @@ void main()
     // dfmt off
     static foreach (enum string moduleString; modules)
     {{
-        printf("Running unittests for module %s:\n", &moduleString[0]);
+        printf(
+            "Running unittests for module %s%s%s:\n",
+            &TermColor.bold[0],
+            &moduleString[0],
+            &TermColor.reset[0],
+        );
         alias tests = __traits(getUnitTests, imported!moduleString);
         static foreach (alias test; tests)
         {{
-            printf("- Running unittest %s: ", &testName!test[0]);
+            printf(
+                "- Running unittest %s%s%s: ",
+                &TermColor.blue[0],
+                &testName!test[0],
+                &TermColor.reset[0],
+            );
             (() @trusted => test())();
-            printf("success\n");
+            printf(
+                "%ssuccess%s\n",
+                &TermColor.green[0],
+                &TermColor.reset[0],
+            );
         }}
     }}
     // dfmt on

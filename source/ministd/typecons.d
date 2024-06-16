@@ -1,5 +1,7 @@
 module ministd.typecons;
 
+@safe @nogc:
+
 /**
 Defines a value paired with a distinctive "null" state that denotes
 the absence of a value. If default constructed, a $(D

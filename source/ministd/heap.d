@@ -1,9 +1,7 @@
 module ministd.heap;
 
-// import core.lifetime;
-// 
-// @safe @nogc:
-// 
+@safe @nogc:
+
 // T* move(T)(ref T* ptr)
 // {
 //     scope(exit) ptr = null;
@@ -15,47 +13,55 @@ module ministd.heap;
 //     scope(exit) slice = [];
 //     return slice;
 // }
-// 
-// struct UniqueHeapPtr(T)
-// {
-//     private T* m_ptr;
-// 
-//     @disable this();
-//     @disable this(typeof(this));
-// 
-//     private
-// 
-//     this(T* ptr) pure
-//     {
-//         m_ptr = ptr;
-//     }
-// 
-//     ~this()
-//     {
-//         if (!empty)
-//             reset;
-//     }
-// 
-//     static typeof(this) create(CtorArgs...)(CtorArgs ctorArgs)
-//     {
-//         T* ptr = dalloc!T;
-//         moveEmplace(T(ctorArgs), *ptr);
-//         return typeof(this)(ptr);
-//     }
-// 
-//     bool empty() pure const => m_ptr is null;
-// 
-//     void reset()
-//     in (!empty)
-//     {
-//         destroy(*m_ptr);
-//         dfree(m_ptr);
-//         m_ptr = null;
-//     }
-// 
-//     inout(T*) get() inout pure => m_ptr;
-// }
-// 
+
+struct UniqueHeapPtr(T)
+{
+    private T* m_ptr;
+
+    @disable this();
+    @disable this(typeof(this));
+
+    private pure
+    this(T* ptr)
+    {
+        m_ptr = ptr;
+    }
+
+    ~this()
+    {
+        if (!empty)
+            reset;
+    }
+
+    static
+    typeof(this) create(CtorArgs...)(CtorArgs ctorArgs)
+    {
+        return typeof(this)(dalloc!T(ctorArgs));
+    }
+
+    bool empty() pure const => m_ptr is null;
+
+    void reset()
+    in (!empty)
+    {
+        dfree(m_ptr);
+        m_ptr = null;
+    }
+
+    inout(T*) get() inout pure => m_ptr;
+}
+
+@("UniqueHeapPtr: ints")
+unittest
+{
+    UniqueHeapPtr!int ptr = UniqueHeapPtr!int.create(5);
+    assert(!ptr.empty);
+    assert(*ptr.get == 5);
+    ptr.reset;
+    assert(ptr.empty);
+    assert(ptr.get is null);
+}
+
 // struct UniqueHeapArray(T)
 // {
 //     private T[] m_arr;
