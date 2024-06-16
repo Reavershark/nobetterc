@@ -22,6 +22,31 @@ void* _d_dynamic_cast(Object o, TypeInfo_Class c)
     return res;
 }
 
+/**
+ * Attempts to cast interface instance pointer p to class c.
+ * Returns p if successful, null if not.
+ */
+extern (C)
+@trusted
+void* _d_interface_cast(scope const void* p, scope const TypeInfo_Class c)
+{
+    if (!p)
+        return null;
+
+    Interface* pi = **cast(Interface***) p;
+
+    Object o2 = cast(Object)(cast(void*)p - pi.offset);
+    assert(o2 !is null);
+
+    void* res = null;
+    size_t offset = 0;
+    if (o2 && _d_isbaseof2(typeid(o2), c, offset))
+    {
+        res = cast(void*) o2 + offset;
+    }
+    return res;
+}
+
 extern (C)
 int _d_isbaseof(scope const TypeInfo_Class subClassTi, scope const TypeInfo_Class baseClassTi)
 {

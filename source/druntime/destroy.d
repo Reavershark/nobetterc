@@ -628,8 +628,7 @@ unittest
 }
 
 @("destroy: interfaces")
-version (none) // TODO: need _d_interface_cast
-// version (DRuntimeClassesAndTypeInfo) //
+version (DRuntimeClassesAndTypeInfo) //
 unittest
 {
     interface I
@@ -718,10 +717,11 @@ unittest
         scope (exit)
             destroy(a);
 
-        a.s = "asd";
+        assert(a.s == "C");
 
+        a.s = "asd";
         destroy(a);
-        assert(a.s == "asd");
+        assert(a.s == string.init);
     }
 }
 

@@ -77,13 +77,28 @@ in (instance !is null)
     free(instance);
 }
 
-version (DRuntimeClassesAndTypeInfo) @trusted
-void dfree(T)(T instance) // Class/interface version
-if (is(T == class) || is(T == interface))
+version (DRuntimeClassesAndTypeInfo) //
+@trusted
+void dfree(T)(T instance) // Class version
+if (is(T == class))
 in (instance !is null)
 {
     destroy(instance);
     free(cast(void*) instance);
+}
+
+version (DRuntimeClassesAndTypeInfo) //
+@trusted
+void dfree(T)(T instance) // Interface version
+if (is(T == interface))
+in (instance !is null)
+in (cast(Object) instance)
+{
+    // Object cast needed to get the right address to free.
+    // Cast needs to happen before destroy
+    Object instanceAsObject = cast(Object) instance;
+    destroy(instance);
+    free(cast(void*) instanceAsObject);
 }
 
 @("dalloc: scalars")
@@ -283,8 +298,8 @@ unittest
 }
 
 @("dfree: dynamic casted classes")
-version (none) // TODO: need _d_interface_cast and _D9invariant12_d_invariantFC6ObjectZv
-// version (DRuntimeClassesAndTypeInfo) //
+version (DRuntimeClassesAndTypeInfo) //
+@trusted
 unittest
 {
     interface I
@@ -295,6 +310,7 @@ unittest
 
     class C : I
     {
+    @nogc:
         int m_a;
 
         this(int a)
@@ -306,24 +322,25 @@ unittest
     }
 
     C c = dalloc!C(1);
-    I i = dalloc!C(2);
-    Object o = dalloc!C(3);
+    C co = dalloc!C(2);
+    C ci = dalloc!C(3);
+    Object o = co;
+    I i = ci;
 
     scope (exit)
     {
         dfree(c);
-        dfree(i);
         dfree(o);
+        dfree(i);
     }
 
     assert(c.foo == 1);
 
-    assert(i.foo == 2);
-    assert(cast(C) i);
-    assert((cast(C) i).foo == 2);
-    assert(typeid(c) is typeid(i));
-
     assert(cast(C) o);
-    assert((cast(C) o).foo == 3);
+    assert((cast(C) o).foo == 2);
     assert(typeid(c) is typeid(o));
+
+    assert(i.foo == 3);
+    assert(cast(C) i);
+    assert((cast(C) i).foo == 3);
 }
