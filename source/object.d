@@ -27,7 +27,7 @@ alias dstring = immutable(dchar)[];
 
 public import druntime.destroy : destroy;
 public import druntime.hashing : hashOf;
-public import druntime.heap : dalloc, dfree;
+public import druntime.heap : dalloc, dallocArray, dfree;
 public import druntime.slices.casting : __ArrayCast;
 public import druntime.slices.comparison : __cmp;
 public import druntime.slices.equality : __equals;
