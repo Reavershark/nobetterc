@@ -4,6 +4,8 @@ import core.internal.lifetime : emplaceInitializer;
 import core.internal.traits : hasElaborateDestructor;
 import core.lifetime : emplace;
 
+import std.traits : isAggregateType, isArray;
+
 @safe @nogc:
 
 /**
@@ -17,7 +19,7 @@ import core.lifetime : emplace;
 // dfmt off
 pure nothrow
 void destroy(bool initialize = true, T)(ref T obj) // Simple value version
-if (!is(T == struct) && !is(T == interface) && !is(T == class) && !__traits(isStaticArray, T))
+if (!isAggregateType!T && !isArray!T)
 {
     static if (initialize)
         obj = T.init;
@@ -25,23 +27,20 @@ if (!is(T == struct) && !is(T == interface) && !is(T == class) && !__traits(isSt
 // dfmt on
 
 /// ditto
+void destroy(bool initialize = true, T)(ref T obj) // Array version
+if (isArray!T)
+{
+    foreach_reverse (ref e; obj[])
+        destroy!initialize(e);
+}
+
+/// ditto
 void destroy(bool initialize = true, T)(ref T obj) // Struct version
 if (is(T == struct))
 {
     destroyStruct(obj);
-
     static if (initialize)
-    {
-        emplaceInitializer(obj); // emplace T.init
-    }
-}
-
-/// ditto
-void destroy(bool initialize = true, T)(ref T obj) // Static array version
-if (__traits(isStaticArray, T))
-{
-    foreach_reverse (ref e; obj[])
-        destroy!initialize(e);
+        emplaceInitializer(obj); // Only emplace T.init, do not call ctor
 }
 
 /// ditto
@@ -222,6 +221,25 @@ unittest
 
     destroy(a);
     assert(a == [0, 0]);
+}
+
+@("destroy: slice")
+nothrow
+unittest
+{
+    int[2] a;
+    a[0] = 1;
+    a[1] = 2;
+
+    int[] slice = a[];
+
+    destroy!false(slice);
+    assert(a == [1, 2]);
+    assert(slice == a[]);
+
+    destroy(slice);
+    assert(a == [0, 0]);
+    assert(slice == a[]);
 }
 
 @("destroy: structs simple")

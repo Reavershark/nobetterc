@@ -21,6 +21,7 @@ enum string[] modules = [
     "druntime.hashing",
     "druntime.heap",
     "druntime.libc_funcs",
+    "druntime.slices.casting",
     "druntime.slices.comparison",
     "druntime.slices.copying",
     "druntime.slices.equality",

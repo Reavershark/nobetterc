@@ -25,11 +25,12 @@ alias dstring = immutable(dchar)[];
 // Always-available functions and templates //
 //////////////////////////////////////////////
 
+public import druntime.destroy : destroy;
 public import druntime.hashing : hashOf;
 public import druntime.heap : dalloc, dfree;
+public import druntime.slices.casting : __ArrayCast;
 public import druntime.slices.comparison : __cmp;
 public import druntime.slices.equality : __equals;
-public import druntime.destroy : destroy;
 
 public import druntime.libc_funcs : printf;
 

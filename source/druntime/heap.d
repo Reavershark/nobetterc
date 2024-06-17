@@ -48,18 +48,29 @@ if (is(T == class))
     return cast(T) allocatedHeapMem.ptr;
 }
 
-/+
 @trusted
-T[] dallocArray(T)(size_t length, ubyte initValue = 0) if (T.sizeof && !isAggregateType!T)
+T[] dallocArray(T)(size_t length, T initValue = T.init) // POD version
+if (T.sizeof && !isAggregateType!T)
+in (length > 0)
 {
-    ubyte* ptr = cast(ubyte*) malloc(T.sizeof * length);
-    assert(ptr, "dallocArray: malloc failed");
-    ubyte[] slice = ptr[0 .. T.sizeof * length];
-    foreach (ref b; slice)
-        b = initValue;
-    return cast(T[]) slice;
+    void[] allocatedHeapMem = mallocWrapper(T.sizeof * length);
+    T[] slice = cast(T[]) allocatedHeapMem;
+    foreach (ref T el; slice)
+        el = initValue;
+    return slice;
 }
-+/
+
+@trusted
+T[] dallocArray(T, CtorArgs...)(size_t length, CtorArgs ctorArgs) // Struct/union version
+if (T.sizeof && (is(T == struct) || is(T == union)))
+in (length > 0)
+{
+    void[] allocatedHeapMem = mallocWrapper(T.sizeof * length);
+    T[] slice = cast(T[]) allocatedHeapMem;
+    foreach (ref T el; slice)
+        (&el).emplace!T(ctorArgs);
+    return slice;
+}
 
 nothrow
 void dfree(T)(T* instance) // Non-aggregate version
@@ -99,6 +110,15 @@ in (cast(Object) instance)
     Object instanceAsObject = cast(Object) instance;
     destroy(instance);
     free(cast(void*) instanceAsObject);
+}
+
+@trusted
+void dfree(T)(T[] arr) // Array version
+if (T.sizeof && !is(T == class) && !is(T == interface))
+in (arr !is null)
+{
+    destroy(arr);
+    free(arr.ptr);
 }
 
 @("dalloc: scalars")
@@ -143,7 +163,8 @@ unittest
 }
 
 @("dalloc: slice values")
-@trusted unittest
+@trusted
+unittest
 {
     static int[5] a;
 
@@ -161,7 +182,8 @@ unittest
 }
 
 @("dalloc: static int arrays")
-@trusted unittest
+@trusted
+unittest
 {
     int[4]* a = dalloc!(int[4]);
     scope (exit)
@@ -173,7 +195,8 @@ unittest
 }
 
 @("dalloc: static char arrays")
-@trusted unittest
+@trusted
+unittest
 {
     char[4] s = "abcd";
 
@@ -186,7 +209,8 @@ unittest
 }
 
 @("dalloc: delegate ptrs")
-@trusted unittest
+@trusted
+unittest
 {
     static int a = 5;
     int f() => a;
@@ -295,6 +319,57 @@ unittest
 
     assert(c.a == -3);
     assert(c.b == -2);
+}
+
+@("dallocArray: non-aggregates")
+nothrow
+unittest
+{
+    int[] arr = dallocArray!int(3, -1);
+    scope(exit)
+        dfree(arr);
+
+    assert(arr.length == 3);
+    foreach (ref el; arr)
+        assert(el == -1);
+}
+
+@("dallocArray: structs")
+nothrow
+unittest
+{
+    static int dtorCalled = 0;
+
+    struct S
+    {
+        int a = 1;
+        int b = 2;
+
+        this(int x)
+        {
+            assert(a == 1);
+            assert(b == 2);
+            b = x;
+        }
+
+        ~this()
+        {
+            dtorCalled++;
+        }
+    }
+
+    S[] arr = dallocArray!S(2, 3);
+
+    assert(arr.length == 2);
+    foreach (ref S s; arr)
+    {
+        assert(s.a == 1);
+        assert(s.b == 3);
+    }
+
+    assert(dtorCalled == 0);
+    dfree(arr);
+    assert(dtorCalled == 2);
 }
 
 @("dfree: dynamic casted classes")
