@@ -1,6 +1,6 @@
 module ministd.algorithm;
 
-import druntime.heap;
+import ministd.traits : isRefType;
 
 @safe @nogc:
 
@@ -15,7 +15,7 @@ if (Values.length != 0)
 }
 
 pure nothrow
-T* move(T)(ref T* ptr)
+T* move(T)(ref T* ptr) // lvalue pointer version
 {
     scope (exit)
         ptr = null;
@@ -23,7 +23,14 @@ T* move(T)(ref T* ptr)
 }
 
 pure nothrow
-T move(T)(ref T instanceRef) if (is(T == class) || is(T == interface))
+T* move(T)(T* ptr) // rvalue pointer version
+{
+    return ptr;
+}
+
+pure nothrow
+T move(T)(ref T instanceRef) // lvalue reference version
+if (isRefType!T)
 {
     scope (exit)
         instanceRef = null;
@@ -31,10 +38,23 @@ T move(T)(ref T instanceRef) if (is(T == class) || is(T == interface))
 }
 
 pure nothrow
-T[] move(T)(ref T[] slice)
+T move(T)(T instanceRef) // rvalue reference version
+if (isRefType!T)
+{
+    return instanceRef;
+}
+
+pure nothrow
+T[] move(T)(ref T[] slice) // lvalue slice version
 {
     scope (exit)
         slice = [];
+    return slice;
+}
+
+pure nothrow
+T[] move(T)(T[] slice) // rvalue slice version
+{
     return slice;
 }
 
@@ -44,8 +64,9 @@ unittest
 {
     int* ptr = dalloc!int;
     assert(ptr !is null);
-    dfree(ptr.move);
+    dfree(ptr.move); // lvalue move
     assert(ptr is null);
+    ptr.init.move; // rvalue move
 }
 
 @("move: slices")
@@ -54,8 +75,9 @@ unittest
 {
     int[] arr = dallocArray!int(2);
     assert(arr !is []);
-    dfree(arr.move);
+    dfree(arr.move); // lvalue move
     assert(arr is []);
+    arr.init.move; // rvalue move
 }
 
 version (DRuntimeClassesAndTypeInfo) //

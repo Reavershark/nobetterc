@@ -3,7 +3,8 @@ module druntime.slices.comparison;
 import druntime.libc_funcs : memcmp;
 
 import core.internal.string : dstrcmp;
-import core.internal.traits : Unqual;
+
+import ministd.traits : Unqual;
 
 @safe @nogc:
 

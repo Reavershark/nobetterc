@@ -46,6 +46,7 @@ private noreturn handleAssertFailure(in string file, in uint line, in string msg
     putstr("\n");
     putstr("Assert failiure in file ");
     putstr(file);
+    printf(":%d", line);
     if (msg.length)
     {
         putstr(": \"");

@@ -1,10 +1,9 @@
 module druntime.destroy;
 
 import core.internal.lifetime : emplaceInitializer;
-import core.internal.traits : hasElaborateDestructor;
 import core.lifetime : emplace;
 
-import std.traits : isAggregateType, isArray;
+import ministd.traits : isAggregateType, isArray, hasElaborateDestructor;
 
 @safe @nogc:
 

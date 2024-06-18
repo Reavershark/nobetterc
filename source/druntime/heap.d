@@ -4,7 +4,7 @@ import druntime.libc_funcs : malloc, free;
 
 import core.lifetime : emplace;
 
-import std.traits : isAggregateType;
+import ministd.traits : isAggregateType;
 
 @safe @nogc:
 
