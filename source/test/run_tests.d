@@ -7,7 +7,6 @@ import ministd.string : TermColor;
 private @safe:
 
 enum string[] modules = [
-    "app.main",
     "druntime.assertion",
     "druntime.classes.casting",
     "druntime.classes.comparison",
