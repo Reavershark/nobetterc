@@ -6,7 +6,7 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 
 mixin template TypeInfo_ClassClassBody()
 {
-    enum ClassFlags : ushort
+    enum ClassFlags : uint
     {
         isCOMclass = 0x1,
         noPointers = 0x2,
@@ -28,12 +28,12 @@ mixin template TypeInfo_ClassClassBody()
     void* destructor;
     void function(Object) classInvariant;
     ClassFlags m_flags;
-    ushort depth; /// Inheritance distance from Object
+    static if (__VERSION__ >= 2_108) ushort depth; /// Inheritance distance from Object
     void* deallocator;
     OffsetTypeInfo[] m_offTi;
     void function(Object) defaultConstructor;
     immutable(void)* m_RTInfo; /// Data for precise GC
-    uint[4] nameSig; /// Unique signature for `name`
+    static if (__VERSION__ >= 2_108) uint[4] nameSig; /// Unique signature for `name`
 
 const @safe pure nothrow @nogc:
 

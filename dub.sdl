@@ -1,7 +1,7 @@
-name "main"
+name "nobetterc"
 targetType "library"
-toolchainRequirements ldc=">=1.38.0" dmd="no" gdc="no"
-
+toolchainRequirements ldc=">=1.37.0" dmd="no" gdc="no"
+buildRequirements "allowWarnings"
 
 dflags \
     "--linkonce-templates" \
@@ -24,12 +24,10 @@ configuration "classes-exceptions" {
 
 buildType "debug" {
     buildOptions "debugMode" "debugInfo"
-    postBuildCommands "clang libmain.a -omain " "./main"
 }
 
 buildType "unittest" {
     buildOptions "debugMode" "debugInfo" "unittests"
-    postBuildCommands "clang libmain.a -otest " "./test"
 }
 
 buildType "release-assert" {

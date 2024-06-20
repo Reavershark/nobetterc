@@ -7,6 +7,7 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 mixin template TypeInfo_StructClassBody()
 {
     import druntime.libc_funcs : memcmp;
+    import druntime.typeinfo.common : withArgTypes;
 
 @safe @nogc:
 
@@ -17,7 +18,9 @@ mixin template TypeInfo_StructClassBody()
     }
 
     string mangledName;
+
     void[] m_init; /// Initializer; m_init.ptr == null if 0 initialized
+
     @safe pure nothrow
     {
         size_t function(in void*) xtoHash;
@@ -25,6 +28,7 @@ mixin template TypeInfo_StructClassBody()
         int function(in void*, in void*) xopCmp;
         string function(in void*) xtoString;
     }
+
     StructFlags m_flags;
 
     union
@@ -34,11 +38,16 @@ mixin template TypeInfo_StructClassBody()
     }
 
     void function(void*) xpostblit;
-    uint m_align;
-    immutable(void)* m_RTInfo; // data for precise GC
 
-    ubyte m_fixme1;
-    ubyte m_fixme2;
+    uint m_align;
+
+    static if (withArgTypes)
+    {
+        TypeInfo m_arg1;
+        TypeInfo m_arg2;
+    }
+
+    immutable(void)* m_RTInfo; // data for precise GC
 
 const:
 

@@ -4,7 +4,7 @@ version (unittest)  :  //
 
 import ministd.string : TermColor;
 
-@safe:
+private @safe:
 
 enum string[] modules = [
     "app.main",
@@ -27,6 +27,7 @@ enum string[] modules = [
     "druntime.slices.equality",
     "druntime.typeinfo.base",
     "druntime.typeinfo.classes_interfaces",
+    "druntime.typeinfo.common",
     "druntime.typeinfo.enums_tuples",
     "druntime.typeinfo.functions",
     "druntime.typeinfo.pointers",
