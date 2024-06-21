@@ -28,41 +28,43 @@ mixin template TypeInfo_ClassClassBody()
     void* destructor;
     void function(Object) classInvariant;
     ClassFlags m_flags;
-    static if (__VERSION__ >= 2_108) ushort depth; /// Inheritance distance from Object
+    static if (__VERSION__ >= 2_108)
+        ushort depth; /// Inheritance distance from Object
     void* deallocator;
     OffsetTypeInfo[] m_offTi;
     void function(Object) defaultConstructor;
     immutable(void)* m_RTInfo; /// Data for precise GC
-    static if (__VERSION__ >= 2_108) uint[4] nameSig; /// Unique signature for `name`
+    static if (__VERSION__ >= 2_108)
+        uint[4] nameSig; /// Unique signature for `name`
 
 const @safe pure nothrow @nogc:
 
-    //
-    // Overridden TypeInfo methods
-    //
+        //
+        // Overridden TypeInfo methods
+        //
 
-    override @system
-    int compare(in void* p1, in void* p2)
-    {
-        Object o1 = *cast(Object*) p1;
-        Object o2 = *cast(Object*) p2;
-        int c = 0;
-
-        // Regard null references as always being "less than"
-        if (o1 !is o2)
+        override @system
+        int compare(in void* p1, in void* p2)
         {
-            if (o1)
-            {
-                if (!o2)
-                    c = 1;
+            Object o1 = *cast(Object*) p1;
+            Object o2 = *cast(Object*) p2;
+            int c = 0;
+
+            // Regard null references as always being "less than"
+            if (o1 !is o2)
+                {
+                if (o1)
+                    {
+                    if (!o2)
+                        c = 1;
+                    else
+                        c = o1.opCmp(o2);
+                }
                 else
-                    c = o1.opCmp(o2);
+                    c = -1;
             }
-            else
-                c = -1;
+            return c;
         }
-        return c;
-    }
 
     override @system
     bool equals(in void* p1, in void* p2)
@@ -290,4 +292,26 @@ const pure nothrow:
 
         return child !is null && _d_isbaseof(child.info, this.info);
     }
+}
+
+@("TypeInfo_Class")
+unittest
+{
+    class C
+    {
+    }
+
+    TypeInfo_Class ti = typeid(C);
+    assert(ti !is null);
+}
+
+@("TypeInfo_Interface")
+unittest
+{
+    interface I
+    {
+    }
+
+    TypeInfo_Interface ti = typeid(I);
+    assert(ti !is null);
 }

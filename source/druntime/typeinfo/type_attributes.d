@@ -97,3 +97,38 @@ override const pure nothrow:
         sink(")");
     }
 }
+
+@("TypeInfo_Const")
+unittest
+{
+    TypeInfo_Const ti = typeid(const int);
+    assert(ti !is null);
+    assert(ti.base is typeid(int));
+}
+
+@("TypeInfo_Invariant")
+unittest
+{
+    TypeInfo_Invariant ti = typeid(immutable int);
+    assert(ti !is null);
+    assert(ti.base is typeid(int));
+    assert(cast(TypeInfo_Const) ti !is null);
+}
+
+@("TypeInfo_Inout")
+unittest
+{
+    TypeInfo_Inout ti = typeid(inout int);
+    assert(ti !is null);
+    assert(ti.base is typeid(int));
+    assert(cast(TypeInfo_Const) ti !is null);
+}
+
+@("TypeInfo_Shared")
+unittest
+{
+    TypeInfo_Shared ti = typeid(shared int);
+    assert(ti !is null);
+    assert(ti.base is typeid(int));
+    assert(cast(TypeInfo_Const) ti !is null);
+}

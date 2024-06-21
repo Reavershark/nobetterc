@@ -143,102 +143,35 @@ unittest
     assert(uniq.empty);
 }
 
-@("UniqueHeap: structs with ctor")
+@("UniqueHeap: structs")
 unittest
 {
+    static int ctorCalled, dtorCalled;
+
     struct S
     {
-        int m_a;
+        int m_a = 1;
 
-    pure nothrow scope:
-
-        @disable this();
+    nothrow scope:
 
         this(in int a)
         {
             m_a = a;
+            ctorCalled++;
         }
 
-        this(in int[] a...)
+        this(in bool[3] a...)
         {
+            m_a = 0;
             foreach (el; a)
-                m_a -= el;
+                if (el)
+                    m_a++;
+            ctorCalled++;
         }
-    }
 
-    {
-        UniqueHeap!S uniq = UniqueHeap!S.create(5);
-
-        assert(!uniq.empty);
-        assert(uniq.get.m_a == 5);
-
-        uniq.reset;
-        assert(uniq.empty);
-    }
-    {
-        UniqueHeap!S uniq = UniqueHeap!S.create(1, 2, 3);
-
-        assert(!uniq.empty);
-        assert(uniq.get.m_a == -6);
-
-        uniq.reset;
-        assert(uniq.empty);
-    }
-}
-
-@("UniqueHeap: structs with dtor")
-unittest
-{
-    static int dtorCalled;
-
-    struct S
-    {
-    nothrow scope:
-         ~this()
+        this(ref scope typeof(this) other)
         {
-            dtorCalled++;
-        }
-    }
-
-    {
-        auto uniq = UniqueHeap!S.create;
-
-        assert(!uniq.empty);
-        assert(dtorCalled == 0);
-
-        uniq.reset;
-        assert(uniq.empty);
-        assert(dtorCalled == 1);
-    }
-    {
-        auto uniq = UniqueHeap!S.create;
-
-        assert(!uniq.empty);
-        assert(dtorCalled == 1);
-    }
-    assert(dtorCalled == 2);
-}
-
-version (DRuntimeClassesAndTypeInfo) //
-@("UniqueHeap: classes")
-unittest
-{
-    static int dtorCalled;
-    class C
-    {
-        int m_a;
-
-    nothrow scope:
-
-        pure
-        this()
-        {
-        }
- 
-        pure
-        this(in int a)
-        {
-            m_a = a;
+            assert(false); // Never called
         }
 
         ~this()
@@ -248,54 +181,145 @@ unittest
     }
 
     {
-        auto uniq = UniqueHeap!C.create(5);
+        auto uniq = UniqueHeap!S.create;
 
         assert(!uniq.empty);
+        assert(uniq.get.m_a == 1);
+        assert(ctorCalled == 0);
         assert(dtorCalled == 0);
-        assert(uniq.get.m_a == 5);
 
         uniq.reset;
         assert(uniq.empty);
+        assert(ctorCalled == 0);
         assert(dtorCalled == 1);
     }
     {
-        auto uniq = UniqueHeap!C.create;
+        auto uniq = UniqueHeap!S.create(5);
 
         assert(!uniq.empty);
+        assert(uniq.get.m_a == 5);
+        assert(ctorCalled == 1);
         assert(dtorCalled == 1);
-        assert(uniq.get.m_a == 0);
     }
+    assert(ctorCalled == 1);
     assert(dtorCalled == 2);
+    {
+        auto uniq = UniqueHeap!S.create(true, false, true);
+
+        assert(!uniq.empty);
+        assert(uniq.get.m_a == 2);
+        assert(ctorCalled == 2);
+        assert(dtorCalled == 2);
+
+        auto cpy = uniq; // Doesn't call S copy ctor
+        assert(uniq.empty);
+        assert(!cpy.empty);
+        assert(cpy.get.m_a == 2);
+        assert(ctorCalled == 2);
+        assert(dtorCalled == 2);
+    }
+    assert(ctorCalled == 2);
+    assert(dtorCalled == 3); // Only cpy calls S dtor
+}
+
+version (DRuntimeClassesAndTypeInfo) //
+@("UniqueHeap: classes")
+unittest
+{
+    static int ctorCalled, dtorCalled;
+
+    class C
+    {
+        int m_a = 1;
+
+    nothrow scope:
+
+        this(in int a)
+        {
+            m_a = a;
+            ctorCalled++;
+        }
+
+        this(in bool[3] a...)
+        {
+            m_a = 0;
+            foreach (el; a)
+                if (el)
+                    m_a++;
+            ctorCalled++;
+        }
+
+        this(ref scope typeof(this) other)
+        {
+            assert(false); // Never called
+        }
+
+        ~this()
+        {
+            dtorCalled++;
+        }
+    }
+
+    // No default or 0-arg ctor
+    assert(__traits(compiles, UniqueHeap!C.create));
+
+    {
+        auto uniq = UniqueHeap!C.create(5);
+
+        assert(!uniq.empty);
+        assert(uniq.get.m_a == 5);
+        assert(ctorCalled == 1);
+        assert(dtorCalled == 0);
+    }
+    assert(ctorCalled == 1);
+    assert(dtorCalled == 1);
+    {
+        auto uniq = UniqueHeap!C.create(true, false, true);
+
+        assert(!uniq.empty);
+        assert(uniq.get.m_a == 2);
+        assert(ctorCalled == 2);
+        assert(dtorCalled == 1);
+
+        auto cpy = uniq; // Doesn't call S copy ctor
+        assert(uniq.empty);
+        assert(!cpy.empty);
+        assert(cpy.get.m_a == 2);
+        assert(ctorCalled == 2);
+        assert(dtorCalled == 1);
+    }
+    assert(ctorCalled == 2);
+    assert(dtorCalled == 2); // Only cpy calls S dtor
 }
 
 @("SharedHeap: ints")
 unittest
 {
-    SharedHeap!int shrd = SharedHeap!int.create(5);
+    SharedHeap!int sh = SharedHeap!int.create(5);
 
-    assert(!shrd.empty);
-    assert(shrd.m_container !is null);
-    assert(shrd.m_container.m_refCount == 1);
-    assert(!shrd.m_container.m_uniq.empty);
-    shrd.m_container.m_uniq.get;
-    assert(shrd.get == 5);
+    assert(!sh.empty);
+    assert(sh.m_container !is null);
+    assert(sh.m_container.m_refCount == 1);
+    assert(!sh.m_container.m_uniq.empty);
+    sh.m_container.m_uniq.get;
+    assert(sh.get == 5);
 
-    SharedHeap!int cpy1 = shrd;
-    assert(shrd.m_container.m_refCount == 2);
+    auto cpy1 = sh;
+    assert(sh.m_container.m_refCount == 2);
     assert(cpy1.m_container.m_refCount == 2);
 
-    SharedHeap!int cpy2 = SharedHeap!int(cpy1);
-    assert(shrd.m_container.m_refCount == 3);
+    auto cpy2 = SharedHeap!int(cpy1);
+    assert(sh.m_container.m_refCount == 3);
     assert(cpy1.m_container.m_refCount == 3);
     assert(cpy2.m_container.m_refCount == 3);
 
     cpy1.reset;
-    assert(shrd.m_container.m_refCount == 2);
+    assert(sh.m_container.m_refCount == 2);
     assert(cpy1.empty);
     assert(cpy2.m_container.m_refCount == 2);
 
-    shrd.reset;
-    assert(shrd.empty);
+    sh.reset;
+    assert(sh.empty);
     assert(cpy2.m_container.m_refCount == 1);
     cpy2.reset;
     assert(cpy2.empty);

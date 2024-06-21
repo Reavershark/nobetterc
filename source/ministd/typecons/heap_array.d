@@ -98,7 +98,7 @@ if (!isRefType!T)
         => m_container is null || m_container.m_uniq.empty;
 
     pure nothrow
-    ref inout(T[]) get() inout return
+    inout(T[]) get() inout return
     in (!empty)
         => m_container.m_uniq.get;
 
@@ -127,4 +127,48 @@ unittest
     arr.reset;
     assert(arr.empty);
     assert(arr.get is []);
+}
+
+@("SharedHeapArray: ints")
+unittest
+{
+    SharedHeapArray!int sh = SharedHeapArray!int.create(5, 1);
+
+    assert(!sh.empty);
+    assert(sh.m_container !is null);
+    assert(sh.m_container.m_refCount == 1);
+    assert(!sh.m_container.m_uniq.empty);
+    sh.m_container.m_uniq.get;
+
+    assert(sh.get.length == 5);
+    foreach (ref int el; sh.get)
+        assert(el == 1);
+
+    auto cpy1 = sh;
+    assert(sh.m_container.m_refCount == 2);
+    assert(cpy1.m_container.m_refCount == 2);
+
+    auto cpy2 = SharedHeapArray!int(cpy1);
+    assert(sh.m_container.m_refCount == 3);
+    assert(cpy1.m_container.m_refCount == 3);
+    assert(cpy2.m_container.m_refCount == 3);
+
+    cpy1.reset;
+    assert(sh.m_container.m_refCount == 2);
+    assert(cpy1.empty);
+    assert(cpy2.m_container.m_refCount == 2);
+
+    assert(sh.get.length == 5);
+    foreach (ref int el; sh.get)
+        assert(el == 1);
+
+    assert(cpy2.get.length == 5);
+    foreach (ref int el; cpy2.get)
+        assert(el == 1);
+
+    sh.reset;
+    assert(sh.empty);
+    assert(cpy2.m_container.m_refCount == 1);
+    cpy2.reset;
+    assert(cpy2.empty);
 }

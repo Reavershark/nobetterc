@@ -77,3 +77,11 @@ const pure nothrow:
     override
     size_t tsize() => (void*).sizeof;
 }
+
+@("TypeInfo_Interface")
+unittest
+{
+    TypeInfo_Pointer ti = typeid(int*);
+    assert(ti !is null);
+    assert(ti.next is typeid(int));
+}

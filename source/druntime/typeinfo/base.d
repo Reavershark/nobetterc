@@ -174,3 +174,10 @@ mixin template OffsetTypeInfoStructBody()
     size_t offset; /// Offset of member from start of object
     TypeInfo ti; /// TypeInfo for this member
 }
+
+@("TypeInfo")
+unittest
+{
+    auto ti = dalloc!TypeInfo;
+    dfree(ti);
+}

@@ -203,3 +203,15 @@ pure nothrow:
         }
     }
 }
+
+@("TypeInfo_Struct")
+unittest
+{
+    struct S
+    {
+    }
+
+    TypeInfo_Struct ti = typeid(S);
+    assert(ti !is null);
+    assert(ti.tsize == S.sizeof);
+}
