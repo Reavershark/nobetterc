@@ -27,11 +27,11 @@ mixin template Throwable_ClassBody()
 
 const:
 
-    override nothrow
+    override nothrow @trusted
     string toString()
     {
         string ret;
-        scope auto sink = (in string s) @safe pure nothrow @nogc {
+        scope auto sink = (in string s) @trusted pure nothrow @nogc {
             // TODO
             ret /*~*/  = s;
         };

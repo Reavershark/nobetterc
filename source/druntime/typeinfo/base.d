@@ -31,12 +31,12 @@ const @safe @nogc:
     override pure nothrow
     size_t toHash() => toString.hashOf;
 
-    final override pure nothrow
-    string toString()
+    final override pure nothrow @trusted
+    string toString() scope
     {
         string ret;
 
-        scope auto sink = (in string s) @safe pure nothrow @nogc {
+        scope auto sink = (in string s) @trusted pure nothrow @nogc {
             // TODO
             ret /*~*/  = s;
         };

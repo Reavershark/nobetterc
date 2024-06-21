@@ -33,14 +33,17 @@ enum string[] modules = [
     "druntime.typeinfo.primitives",
     "druntime.typeinfo.slices",
     "druntime.typeinfo.static_arrays",
-    "druntime.typeinfo.structs_unions_vectors",
     "druntime.typeinfo.structs",
+    "druntime.typeinfo.structs_unions_vectors",
     "druntime.typeinfo.type_attributes",
+
     "ministd",
     "ministd.algorithm",
-    "ministd.heap",
     "ministd.string",
     "ministd.typecons",
+    "ministd.typecons.heap",
+    "ministd.typecons.heap_array",
+
     "object",
 ];
 

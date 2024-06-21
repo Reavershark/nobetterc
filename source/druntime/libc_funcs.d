@@ -5,7 +5,7 @@ module druntime.libc_funcs;
 nothrow extern (C)
 {
     void* malloc(size_t size);
-    void free(void* ptr);
+    void free(scope void* ptr);
     int putchar(const char c);
     int puts(scope const char* s);
     pragma(printf) int printf(scope const char* fmt, scope const ...);

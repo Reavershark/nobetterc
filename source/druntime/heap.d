@@ -73,14 +73,14 @@ in (length > 0)
 }
 
 nothrow
-void dfree(T)(T* instance) // Non-aggregate version
+void dfree(T)(scope T* instance) // Non-aggregate version
 if (T.sizeof && !isAggregateType!T)
 in (instance !is null)
 {
     free(instance);
 }
 
-void dfree(T)(T* instance) // Struct/union version
+void dfree(T)(scope T* instance) // Struct/union version
 if (T.sizeof && (is(T == struct) || is(T == union)))
 in (instance !is null)
 {
@@ -90,7 +90,7 @@ in (instance !is null)
 
 version (DRuntimeClassesAndTypeInfo) //
 @trusted
-void dfree(T)(T instance) // Class version
+void dfree(T)(scope T instance) // Class version
 if (is(T == class))
 in (instance !is null)
 {
