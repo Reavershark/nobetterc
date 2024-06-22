@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ldc2 -run
+#!/usr/bin/env -S rdmd
 import std;
 import std.format : f = format;
 
@@ -23,9 +23,9 @@ Target[] targets = [
 ];
 
 string[] configs = [
-    "classes-exceptions",
-    "classes",
     "minimal",
+    "classes",
+    "classes-exceptions",
 ];
 
 void main()

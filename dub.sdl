@@ -5,8 +5,14 @@ buildRequirements "allowWarnings"
 
 dflags \
     "--linkonce-templates" \
-    "--preview=in" "--preview=bitfields" "--preview=fixImmutableConv" \
-    "--fno-moduleinfo" "--preview=dip1000" "--preview=dip1021"
+    "--fno-moduleinfo" \
+    "--preview=dip1000" \
+    "--preview=dip1008" \
+    "--preview=dip1021" \
+    "--preview=bitfields" \
+    "--preview=fixImmutableConv" \
+    "--preview=rvaluerefparam" \
+    "--preview=in"
 
 configuration "minimal" {
     versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion"
