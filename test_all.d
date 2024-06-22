@@ -23,9 +23,9 @@ Target[] targets = [
 ];
 
 string[] configs = [
-    "minimal",
-    "classes",
     "classes-exceptions",
+    "classes",
+    "minimal",
 ];
 
 void main()

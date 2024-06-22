@@ -10,10 +10,10 @@ if (!isRefType!T)
 {
     private T[] m_slice;
 
-    @disable this();
+scope:
 
     private pure nothrow
-    this(scope T[] slice) scope
+    this(scope T[] slice)
     out (; !empty)
     {
         m_slice = slice;
@@ -23,12 +23,12 @@ if (!isRefType!T)
      * Copy constructor (moves reference)
      * `other` can be `empty`.
      */
-    this(ref scope typeof(this) other) scope
+    this(ref scope typeof(this) other)
     {
         m_slice = other.m_slice.move;
     }
 
-    ~this() scope
+    ~this()
     {
         if (!empty)
             reset;
@@ -38,15 +38,17 @@ if (!isRefType!T)
     typeof(this) create(CtorArgs...)(in size_t length, CtorArgs ctorArgs)
         => typeof(this)(dallocArray!T(length, ctorArgs));
 
+    alias get this;
+
     pure nothrow
-    bool empty() const scope
+    bool empty() const
         => m_slice is [];
 
     pure nothrow
-    inout(T[]) get() inout return
+    inout(T[]) get() inout return scope
         => m_slice;
 
-    void reset() scope
+    void reset()
     in (!empty)
     {
         dfree(m_slice.move);
@@ -63,8 +65,6 @@ if (!isRefType!T)
     }
 
     private Container* m_container;
-
-    @disable this();
 
     private pure nothrow
     this(scope Container* container) scope

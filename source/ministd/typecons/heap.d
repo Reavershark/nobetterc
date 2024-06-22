@@ -14,8 +14,6 @@ struct UniqueHeap(T)
 
     private TRef m_ref;
 
-    @disable this();
-
     private pure nothrow
     this(scope TRef reference) scope
     out (; !empty)
@@ -80,8 +78,6 @@ struct SharedHeap(T)
     }
 
     private Container* m_container;
-
-    @disable this();
 
     private pure nothrow
     this(scope Container* container) scope

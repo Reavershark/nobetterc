@@ -20,7 +20,7 @@ pure nothrow
 void destroy(bool initialize = true, T)(ref T obj) // Simple value version
 if (!isAggregateType!T && !isArray!T)
 {
-    static if (initialize)
+    static if (initialize && !is(immutable T == T))
         obj = T.init;
 }
 // dfmt on

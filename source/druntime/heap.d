@@ -100,7 +100,7 @@ in (instance !is null)
 
 version (DRuntimeClassesAndTypeInfo) //
 @trusted
-void dfree(T)(T instance) // Interface version
+void dfree(T)(scope T instance) // Interface version
 if (is(T == interface))
 in (instance !is null)
 in (cast(Object) instance)
@@ -113,7 +113,7 @@ in (cast(Object) instance)
 }
 
 @trusted
-void dfree(T)(T[] arr) // Array version
+void dfree(T)(scope T[] arr) // Array version
 if (T.sizeof && !is(T == class) && !is(T == interface))
 in (arr !is null)
 {

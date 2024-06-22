@@ -15,7 +15,7 @@ nothrow extern (C):
 
 pure:
     noreturn _d_eh_enter_catch() => assert(false);
-    noreturn _d_delThrowable(Throwable t) => assert(false);
+    noreturn _d_delThrowable(scope Throwable t) => assert(false);
     noreturn _d_eh_personality() => assert(false);
 }
 else version (DRuntimeExceptionsImplLibunwind)
