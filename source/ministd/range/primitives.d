@@ -29,8 +29,7 @@ enum bool isInputRange(R) =
 
 enum bool isInputRange(R, E) = isInputRange!R && isQualifierConvertible!(ElementType!R, E);
 
-enum bool isOutputRange(R, E) =
-    is(typeof(put(lvalueOf!R, lvalueOf!E)));
+enum bool isOutputRange(R, E) = is(typeof(lvalueOf!R.put(lvalueOf!E)));
 
 bool empty(T)(auto ref scope T a) //
 if (is(typeof(a.length) : size_t))
