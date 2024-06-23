@@ -34,12 +34,7 @@ public import druntime.slices.equality : __equals;
 
 public import druntime.libc_funcs : printf;
 
-/// Writes `s` to `stderr` during CTFE (does nothing at runtime).
-
-pure nothrow
-void __ctfeWrite(scope const(char)[] s)
-{
-}
+public import druntime.ctfe : __ctfeWrite, _d_arrayappendcTX;
 
 template imported(string moduleName)
 {

@@ -1,6 +1,5 @@
-module ministd.format;
+module ministd.format.write;
 
 public import ministd.format.parse;
-public import ministd.format.write;
 
 @safe pure nothrow @nogc:
