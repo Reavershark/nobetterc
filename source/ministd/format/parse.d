@@ -4,9 +4,16 @@ module ministd.format.parse;
 
 enum FormatSegment[] parseFormatString(string fmt) = {
     FormatSegment[] segments;
+
     string remaining = fmt;
     while (remaining.length)
         segments ~= parseNextSegment(remaining);
+    
+    uint nextArgIndex;
+    foreach(ref seg; segments)
+        if (seg.isFormatSpec)
+            seg.argIndex = nextArgIndex++;
+
     return segments;
 }();
 
@@ -14,6 +21,8 @@ struct FormatSegment
 {
     string str;
     bool isFormatSpec;
+
+    uint argIndex;
 }
 
 private

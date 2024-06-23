@@ -1,7 +1,7 @@
 module ministd.traits;
 
 public import std.traits : hasElaborateDestructor, isAggregateType, isAutodecodableString,
-    isQualifierConvertible, isSomeChar, isSomeString, lvalueOf, rvalueOf, Unqual;
+    isQualifierConvertible, isSomeChar, isSomeString, lvalueOf, rvalueOf, Unqual, isIntegral;
 
 @safe @nogc pure nothrow:
 

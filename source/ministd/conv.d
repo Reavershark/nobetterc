@@ -4,12 +4,56 @@ import ministd.range.primitives : ElementType, isInputRange;
 import ministd.traits : isAggregateType, isSomeChar, isSomeString, Unqual;
 import ministd.typecons : Appender, UniqueHeapArray;
 
-// import std.traits : isSomeChar, isSomeString;
-
 @safe nothrow @nogc:
 
-bool parse(As, Source)(in Source source)
-    => false; // TODO
+auto to(To, From)(in From from)
+{
+    static if (is(To == From))
+        return from;
+    static if (is(typeof(cast(To) from)))
+        return cast(To) from;
+    else
+    {
+        static if (is(To == string))
+        {
+            static if (is(From == ushort) || is(From == uint) || is(From == ulong))
+            {
+                uint digits;
+                {
+                    uint cpy = from;
+                    do
+                    {
+                        digits++;
+                        cpy /= 10;
+                    }
+                    while (cpy);
+                }
+
+                auto result = UniqueHeapArray!char.create(digits);
+                {
+                    uint cpy = from;
+                    foreach_reverse (i; 0 .. digits)
+                    {
+                        result[i] = '0' + cpy % 10;
+                        cpy /= 10;
+                    }
+                }
+                return result;
+            }
+        }
+        assert(false, "to!(" ~ To.stringof ~ ", " ~ From.stringof ~ ") not implemented");
+    }
+}
+
+@("to!(string, uint)")
+unittest
+{
+    assert(0u.to!string == "0");
+    assert(1u.to!string == "1");
+    assert(9u.to!string == "9");
+    assert(10u.to!string == "10");
+    assert(1234u.to!string == "1234");
+}
 
 UniqueHeapArray!char text(Args...)(Args args) //
 if (Args.length > 0)
@@ -52,10 +96,5 @@ if (Args.length > 0)
     }
 }
 
-To to(To, From)(in From from)
-{
-    static if (is(typeof(cast(To) from)))
-        return cast(To) from;
-    else
-        return To.init; // TODO
-}
+bool parse(As, Source)(in Source source)
+    => false; // TODO
