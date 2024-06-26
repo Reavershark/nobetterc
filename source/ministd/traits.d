@@ -1,22 +1,21 @@
 module ministd.traits;
 
-public import std.traits : hasElaborateDestructor, isAggregateType, isAutodecodableString,
-    isQualifierConvertible, isSomeChar, isSomeString, lvalueOf, rvalueOf, Unqual, isIntegral;
+public import std.traits : ConstOf, hasElaborateDestructor, ImmutableOf,
+    isAggregateType, isIntegral, isQualifierConvertible, isSomeChar, isSomeString,
+    lvalueOf, rvalueOf, SharedConstOf, SharedOf, Unqual;
+
+import ministd.meta : Alias, AliasSeq;
 
 @safe @nogc pure nothrow:
 
-version (unittest)
+/// Unittest helper
+version (unittest) alias TypeQualifierList = AliasSeq!(Alias, ConstOf, SharedOf, SharedConstOf, ImmutableOf);
+
+/// Unittest helper
+version (unittest) struct SubTypeOf(T)
 {
-    import std.meta : Alias, AliasSeq;
-    import std.traits : ConstOf, SharedOf, SharedConstOf, ImmutableOf;
-
-    alias TypeQualifierList = AliasSeq!(Alias, ConstOf, SharedOf, SharedConstOf, ImmutableOf);
-
-    struct SubTypeOf(T)
-    {
-        T val;
-        alias val this;
-    }
+    T val;
+    alias val this;
 }
 
 /// Detect whether type `T` is a static array.
@@ -142,16 +141,3 @@ unittest
 
 /// Detect whether type `T` is a reference type.
 enum bool isRefType(T) = is(T == class) || is(T == interface);
-
-enum bool amongTypes(needle, haystack...) = {
-    foreach (el; haystack)
-        if (is(needle == el))
-            return true;
-    return false;
-}();
-
-unittest
-{
-    static assert(amongTypes!(int, ushort, int, string));
-    static assert(!amongTypes!(int, ushort, uint, string));
-}
