@@ -142,3 +142,16 @@ unittest
 
 /// Detect whether type `T` is a reference type.
 enum bool isRefType(T) = is(T == class) || is(T == interface);
+
+enum bool amongTypes(needle, haystack...) = {
+    foreach (el; haystack)
+        if (is(needle == el))
+            return true;
+    return false;
+}();
+
+unittest
+{
+    static assert(amongTypes!(int, ushort, int, string));
+    static assert(!amongTypes!(int, ushort, uint, string));
+}

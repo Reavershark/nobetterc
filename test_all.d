@@ -1,4 +1,4 @@
-#!/usr/bin/env -S rdmd
+#!/usr/bin/env rdmd
 import std;
 import std.format : f = format;
 
@@ -16,7 +16,7 @@ struct Target
 }
 
 Target[] targets = [
-    {dubArch: "x86_64-pc-linux", clangTarget: "x86_64-pc-linux"},
+    {dubArch: "x86_64", clangTarget: "x86_64-pc-linux"},
     // {dubArch: "i386-pc-linux"},
     // {dubArch: "arm64-pc-linux"},
     // {dubArch: "xtensa-unknown-elf"},

@@ -42,6 +42,8 @@ enum string[] modules = [
     "ministd.algorithm",
     "ministd.ascii",
     "ministd.conv",
+    "ministd.conv.to",
+    "ministd.conv.internal.to_string",
     "ministd.format",
     "ministd.format.parse",
     "ministd.format.write",
