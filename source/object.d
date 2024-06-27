@@ -34,11 +34,17 @@ public import druntime.slices.equality : __equals;
 
 public import druntime.libc_funcs : printf;
 
-public import druntime.ctfe : __ctfeWrite, _d_arrayappendcTX;
+public import druntime.ctfe : __ctfeWrite, _d_arraycatnTX, _d_arrayappendcTX;
 
 template imported(string moduleName)
 {
     mixin("import imported = " ~ moduleName ~ ";");
+}
+
+/// Forces CTFE of an expression
+template ct(alias value)
+{
+    enum ct = value;
 }
 
 /////////////

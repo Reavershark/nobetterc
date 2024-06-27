@@ -12,6 +12,7 @@ module druntime.ctfe;
 pure nothrow @nogc
 void __ctfeWrite(scope const(char)[] s);
 
+Tret _d_arraycatnTX(Tret, Tarr...)(auto ref Tarr froms);
 T[] _d_arrayappendcTX(T)(return ref scope T[] arr, size_t n);
 
 @("Using CTFE-only functions in if (__ctfe) links")

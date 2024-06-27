@@ -2,7 +2,8 @@ module test.run_tests;
 
 version (unittest)  :  //
 
-import ministd.string : TermColor;
+import ministd.stdio : write, writeln;
+import ministd.string : TC = TermColor;
 
 private @safe:
 
@@ -40,6 +41,7 @@ enum string[] modules = [
 
     "ministd",
     "ministd.algorithm",
+    "ministd.algorithm.move",
     "ministd.ascii",
     "ministd.meta",
     "ministd.range.primitives",
@@ -75,27 +77,13 @@ void main()
     // dfmt off
     static foreach (enum string moduleString; modules)
     {{
-        printf(
-            "Running unittests for module %s%s%s:\n",
-            &TermColor.bold[0],
-            &moduleString[0],
-            &TermColor.reset[0],
-        );
+        ct!("Running unittests for module " ~ TC.bold(moduleString) ~ ":").writeln;
         alias tests = __traits(getUnitTests, imported!moduleString);
         static foreach (alias test; tests)
         {{
-            printf(
-                "- Running unittest %s%s%s: ",
-                &TermColor.blue[0],
-                &testName!test[0],
-                &TermColor.reset[0],
-            );
+            ct!("- Running unittest " ~ TC.blue(testName!test) ~ ":").write;
             (() @trusted => test())();
-            printf(
-                "%ssuccess%s\n",
-                &TermColor.green[0],
-                &TermColor.reset[0],
-            );
+            ct!(TC.green("success")).writeln;
         }}
     }}
     // dfmt on

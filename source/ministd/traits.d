@@ -2,7 +2,7 @@ module ministd.traits;
 
 public import std.traits : ConstOf, hasElaborateDestructor, ImmutableOf,
     isAggregateType, isIntegral, isQualifierConvertible, isSomeChar, isSomeString,
-    lvalueOf, rvalueOf, SharedConstOf, SharedOf, Unqual;
+    lvalueOf, rvalueOf, SharedConstOf, SharedOf, Unqual, isCallable;
 
 import ministd.meta : Alias, AliasSeq;
 
