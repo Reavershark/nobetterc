@@ -27,7 +27,7 @@ enum bool isInputRange(R) =
     && !is(typeof((R r) { return r.front; }(R.init)) == void)
     && is(typeof((R r) => r.popFront));
 
-enum bool isInputRange(R, E) = isInputRange!R && isQualifierConvertible!(ElementType!R, E);
+enum bool isInputRange(R, E) = isInputRange!R && isQualifierConvertible!(ElementType!R, E); // @suppress(dscanner.suspicious.label_var_same_name)
 
 enum bool isOutputRange(R, E) = is(typeof(lvalueOf!R.put(lvalueOf!E)));
 
