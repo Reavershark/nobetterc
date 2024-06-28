@@ -48,6 +48,3 @@ if (Args.length > 0)
         return appender.moveArray;
     }
 }
-
-bool parse(As, Source)(in Source source)
-    => false; // TODO
