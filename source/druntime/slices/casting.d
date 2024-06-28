@@ -1,6 +1,8 @@
 module druntime.slices.casting;
 
-@safe @nogc:
+import ministd.format : f;
+
+@safe nothrow @nogc:
 
 /**
  * The compiler lowers expressions of `cast(TTo[])TFrom[]` to
@@ -12,17 +14,19 @@ module druntime.slices.casting;
  * Returns:
  *     `from` reinterpreted as `TTo[]`
  */
-pure @trusted
-TTo[] __ArrayCast(TFrom, TTo)(return scope TFrom[] from)
+@trusted
+T[] __ArrayCast(S, T)(return scope S[] src)
 {
-    const fromSize = from.length * TFrom.sizeof;
-    const toLength = fromSize / TTo.sizeof;
+    const srcSize = src.length * S.sizeof;
+    const toLength = srcSize / T.sizeof;
 
-    if ((fromSize % TTo.sizeof) != 0)
+    if ((srcSize % T.sizeof) != 0)
     {
-        // TODO: format error
-        // onArrayCastError(TFrom.stringof, fromSize, from.length, TTo.stringof, TTo.sizeof);
-        assert(false, "__ArrayCast error");
+        auto msg = f!"cannot cast %s[] with length %s and sizeof %s to %s[] with sizeof %s"(
+            S.stringof, src.length, S.sizeof,
+            T.stringof, T.sizeof,
+        );
+        assert(false, msg.get);
     }
 
     struct Slice
@@ -31,13 +35,12 @@ TTo[] __ArrayCast(TFrom, TTo)(return scope TFrom[] from)
         void* ptr;
     }
 
-    auto a = cast(Slice*)&from;
+    auto a = cast(Slice*)&src;
     a.length = toLength; // jam new length
-    return *cast(TTo[]*) a;
+    return *cast(T[]*) a;
 }
 
 @("slice __ArrayCast")
-pure nothrow
 unittest
 {
     byte[int.sizeof * 3] b = cast(byte) 0xab;
@@ -58,4 +61,12 @@ unittest
     assert(s.length == 6);
     foreach (v; s)
         assert(v == cast(short) 0xabab);
+}
+
+@("slice __ArrayCast fail tests (commented out)")
+unittest
+{
+    ubyte[3] a;
+
+    // int[] b = __ArrayCast!(ubyte, int)(a[]);
 }
