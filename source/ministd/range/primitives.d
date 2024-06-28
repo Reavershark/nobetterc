@@ -33,23 +33,30 @@ enum bool isOutputRange(R, E) = is(typeof(lvalueOf!R.put(lvalueOf!E)));
 
 template equalUnqualElementTypes(T1, T2)
 {
-    static if (isInputRange!T1 && isInputRange!T2)
+    alias U1 = Unqual!T1;
+    alias U2 = Unqual!T2;
+
+    alias E1 = ElementType!U1;
+    alias E2 = ElementType!U2;
+
+    static if (is(E1 == void) || is(E2 == void))
     {
-        alias U1 = Unqual!T1;
-        alias U2 = Unqual!T2;
-
-        alias E1 = ElementType!U1;
-        alias E2 = ElementType!U2;
-
+        enum bool equalUnqualElementTypes = false;
+    }
+    else
+    {
         alias UE1 = Unqual!E1;
         alias UE2 = Unqual!E2;
 
         enum bool equalUnqualElementTypes = is(UE1 == UE2);
     }
-    else
-    {
-        enum bool equalUnqualElementTypes = false;
-    }
+}
+
+@("equalUnqualElementTypes")
+unittest
+{
+    static assert(equalUnqualElementTypes!(string, char[]));
+    static assert(equalUnqualElementTypes!(const(string), char[]));
 }
 
 bool empty(T)(auto ref scope T a) //

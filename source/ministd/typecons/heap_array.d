@@ -38,8 +38,6 @@ scope:
     typeof(this) create(CtorArgs...)(in size_t length, CtorArgs ctorArgs)
         => typeof(this)(dallocArray!T(length, ctorArgs));
 
-    alias get this;
-
     pure nothrow
     bool empty() const
         => m_slice is [];
@@ -47,6 +45,8 @@ scope:
     pure nothrow
     inout(T[]) get() inout return scope
         => m_slice;
+
+    alias get this;
 
     void reset()
     in (!empty)

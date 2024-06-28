@@ -8,8 +8,8 @@ import ministd.typecons.heap_array : UniqueHeapArray;
 
 struct DynArray(T)
 {
-    private UniqueHeapArray!T m_arr;
-    private size_t m_used;
+     UniqueHeapArray!T m_arr;
+     size_t m_used;
 
 scope:
 
@@ -43,7 +43,7 @@ scope:
         => m_arr.get[0 .. m_used];
     
     alias get this;
-
+    
     void put(const ref T value)
     {
         reserve(1);
@@ -79,4 +79,48 @@ scope:
     private pure
     size_t nextNaturalSize() const
         => max(1, reserved * 2);
+}
+
+@("DynArray")
+unittest
+{
+    DynArray!char a;
+    assert(a.empty);
+    assert(a.length == 0);
+    assert(a.reserved == 0);
+
+    a.put('d');
+    assert(!a.empty);
+    assert(a.length == 1);
+    assert(a.reserved == 1);
+
+    a.put('m');
+    assert(!a.empty);
+    assert(a.length == 2);
+    assert(a.reserved == 2);
+
+    a.put('a');
+    assert(!a.empty);
+    assert(a.length == 3);
+    assert(a.reserved == 4);
+
+    a.reserve(20);
+    assert(!a.empty);
+    assert(a.length == 3);
+    assert(a.reserved == 23);
+
+    a.put("n!");
+    assert(!a.empty);
+    assert(a.length == 5);
+    assert(a.reserved == 23);
+
+    a.reserve(1);
+    assert(!a.empty);
+    assert(a.length == 5);
+    assert(a.reserved == 23);
+
+    assert(a.get == "dman!");
+
+    auto moved = a;
+    assert(a.empty);
 }

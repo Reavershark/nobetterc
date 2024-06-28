@@ -11,7 +11,7 @@ DynArray!char format(string fmt, Args...)(Args args)
 {
     Appender!char output;
     output.formattedWrite!fmt(args);
-    return output.moveArray;
+    return output;
 }
 
 @("format string int uint")

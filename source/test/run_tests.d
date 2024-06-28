@@ -54,6 +54,7 @@ enum string[] modules = [
     "ministd.string",
     "ministd.typecons",
     "ministd.typecons.appender",
+    "ministd.typecons.dynarray",
     "ministd.typecons.heap",
     "ministd.typecons.heap_array",
 
