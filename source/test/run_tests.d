@@ -84,13 +84,13 @@ void main()
     // dfmt off
     static foreach (enum string moduleString; modules)
     {{
-        ct!("Running unittests for module " ~ TC.bold(moduleString) ~ ":").writeln;
+        writeln(ct!("Running unittests for module " ~ TC.bold(moduleString) ~ ":"));
         alias tests = __traits(getUnitTests, imported!moduleString);
         static foreach (alias test; tests)
         {{
-            ct!("- Running unittest " ~ TC.blue(testName!test) ~ ":").write;
+            write(ct!("- Running unittest " ~ TC.blue(testName!test) ~ ": "));
             (() @trusted => test())();
-            ct!(TC.green("success")).writeln;
+            writeln(ct!(TC.green("success")));
         }}
     }}
     // dfmt on

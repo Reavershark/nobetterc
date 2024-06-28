@@ -8,8 +8,8 @@ import ministd.typecons.heap_array : UniqueHeapArray;
 
 struct DynArray(T)
 {
-     UniqueHeapArray!T m_arr;
-     size_t m_used;
+    UniqueHeapArray!T m_arr;
+    size_t m_used;
 
 scope:
 
@@ -25,10 +25,14 @@ scope:
         other.m_used = 0;
     }
 
-    // TODO
-    // void create(...)
-    // TODO
-    // void increaseSize(...)
+    static
+    typeof(this) create(in size_t length)
+    {
+        typeof(this) res;
+        res.m_arr = typeof(m_arr).create(length);
+        res.m_used = length;
+        return res;
+    }
 
     const pure
     {
@@ -41,9 +45,9 @@ scope:
     inout(T[]) get() inout
     in (!empty)
         => m_arr.get[0 .. m_used];
-    
+
     alias get this;
-    
+
     void put(const ref T value)
     {
         reserve(1);
@@ -72,8 +76,14 @@ scope:
             newArr.get[0 .. m_used] = m_arr.get[0 .. m_used];
 
         // Replace old array with new array
-        // (tmp = m_arr.moveEmplaceInit; m_arr.copyCtor(newArr); destroy(tmp))
+        // (does tmp = m_arr.moveEmplaceInit; m_arr.copyCtor(newArr); destroy(tmp))
         m_arr = newArr;
+    }
+
+    void increaseSize(in size_t length)
+    {
+        reserve(length);
+        m_used += length;
     }
 
     private pure
@@ -81,10 +91,34 @@ scope:
         => max(1, reserved * 2);
 }
 
-@("DynArray")
+@("DynArray create")
 unittest
 {
+    auto a = DynArray!char.create(123);
+
+    assert(!a.empty);
+    assert(a.length == 123);
+    assert(a.reserved == 123); // Exactly the same
+
+    a.increaseSize(7);
+    assert(!a.empty);
+    assert(a.length == 130);
+    assert(a.reserved >= 130); // Not the same
+
+    auto moved = a;
+    assert(a.empty);
+}
+
+@("DynArray as OutputRange")
+unittest
+{
+    import ministd.range.primitives : isOutputRange;
+
     DynArray!char a;
+
+    static assert(isOutputRange!(typeof(a), char));
+    static assert(isOutputRange!(typeof(a), char[]));
+
     assert(a.empty);
     assert(a.length == 0);
     assert(a.reserved == 0);
