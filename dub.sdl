@@ -10,6 +10,7 @@ dflags \
     "--preview=dip1008" \
     "--preview=dip1021" \
     "--preview=bitfields" \
+    "--preview=fixAliasThis" \
     "--preview=fixImmutableConv" \
     "--preview=rvaluerefparam" \
     "--preview=in"

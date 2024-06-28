@@ -1,6 +1,6 @@
 module ministd.range.primitives;
 
-import ministd.traits : lvalueOf, isQualifierConvertible;
+import ministd.traits : isQualifierConvertible, lvalueOf, Unqual;
 
 @safe pure nothrow @nogc:
 
@@ -30,6 +30,27 @@ enum bool isInputRange(R) =
 enum bool isInputRange(R, E) = isInputRange!R && isQualifierConvertible!(ElementType!R, E);
 
 enum bool isOutputRange(R, E) = is(typeof(lvalueOf!R.put(lvalueOf!E)));
+
+template equalUnqualElementTypes(T1, T2)
+{
+    static if (isInputRange!T1 && isInputRange!T2)
+    {
+        alias U1 = Unqual!T1;
+        alias U2 = Unqual!T2;
+
+        alias E1 = ElementType!U1;
+        alias E2 = ElementType!U2;
+
+        alias UE1 = Unqual!E1;
+        alias UE2 = Unqual!E2;
+
+        enum bool equalUnqualElementTypes = is(UE1 == UE2);
+    }
+    else
+    {
+        enum bool equalUnqualElementTypes = false;
+    }
+}
 
 bool empty(T)(auto ref scope T a) //
 if (is(typeof(a.length) : size_t))

@@ -2,6 +2,8 @@ module druntime.assertion;
 
 version (DRuntimeAssertion)  :  //
 
+import ministd.format : format;
+
 @safe @nogc:
 
 /// Handle assert failed
