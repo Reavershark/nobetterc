@@ -1,8 +1,11 @@
 module ministd.traits;
 
-public import std.traits : ConstOf, hasElaborateDestructor, ImmutableOf,
-    isAggregateType, isIntegral, isQualifierConvertible, isSomeChar, isSomeString,
-    lvalueOf, rvalueOf, SharedConstOf, SharedOf, Unqual, isCallable;
+public import std.traits : ConstOf, ImmutableOf, SharedConstOf, SharedOf;
+public import std.traits : lvalueOf, rvalueOf;
+public import std.traits : ReturnType, Unqual;
+public import std.traits : isAggregateType, isCallable, isIntegral, isSomeChar, isSomeString;
+public import std.traits : isInstanceOf, isQualifierConvertible;
+public import std.traits : hasElaborateDestructor;
 
 import ministd.meta : Alias, AliasSeq;
 
