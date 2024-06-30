@@ -41,6 +41,10 @@ noreturn _d_arraybounds_slice(
     handleAssertFailure(file, line, msg.get);
 }
 
+/// Handle hitting the end of a final switch
+noreturn __switch_error()(const string file = __FILE__, const uint line = __LINE__)
+    => handleAssertFailure(file, line, "Hit the end of a final switch");
+
 private
 noreturn handleAssertFailure(string file, uint line, const(char)[] msg = "")
 {

@@ -25,6 +25,7 @@ alias dstring = immutable(dchar)[];
 // Always-available functions and templates //
 //////////////////////////////////////////////
 
+public import druntime.assertion : __switch_error;
 public import druntime.destroy : destroy;
 public import druntime.hashing : hashOf;
 public import druntime.heap : dalloc, dallocArray, dfree;
