@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
-docker run \
-    --rm \
-    --interactive --tty \
-    --volume="${PWD}":/work \
-    jmeeuws/esp-dlang \
-    bash -c " \
-        ulimit -n 4096 && \
-        \$SHELL \
-    "
+DOCKER_RUN_ARGS=""
+DOCKER_RUN_ARGS+=" --rm"
+DOCKER_RUN_ARGS+=" -it"
+DOCKER_RUN_ARGS+=" --volume=${PWD}:/work"
+
+IMAGE="jmeeuws/esp-dlang:latest"
+
+INIT_SCRIPT=" \
+ulimit -n 4096 && \
+bash \
+"
+
+docker run $DOCKER_RUN_ARGS $IMAGE bash -c "${INIT_SCRIPT}"
+
 sudo chown -R $UID .
