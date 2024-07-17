@@ -1,11 +1,18 @@
 name "nobetterc"
 targetType "library"
+
+
 toolchainRequirements ldc=">=1.37.0" dmd="no" gdc="no"
+
 buildRequirements "allowWarnings"
 
+// General flags
 dflags \
     "--linkonce-templates" \
-    "--fno-moduleinfo" \
+    "--fno-moduleinfo"
+
+// Preview flags
+dflags \
     "--preview=dip1000" \
     "--preview=dip1008" \
     "--preview=dip1021" \
@@ -14,6 +21,7 @@ dflags \
     "--preview=fixImmutableConv" \
     "--preview=rvaluerefparam" \
     "--preview=in"
+
 
 configuration "minimal" {
     versions "DRuntimeExternLibcFuncs" "DRuntimeAssertion"
