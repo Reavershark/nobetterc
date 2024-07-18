@@ -13,8 +13,8 @@ jobs:
           - esp32s3
         dubConfig:
           - minimal
-          #- classes
-          #- classes-exceptions
+          - classes
+          - classes-exceptions
     runs-on: ubuntu-latest
     container:
       image: jmeeuws/esp-dlang
