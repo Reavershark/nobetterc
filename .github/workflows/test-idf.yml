@@ -29,7 +29,12 @@ jobs:
           source /opt/esp-idf/export.sh >/dev/null
           ulimit -n 4096
           cd ./test/
-          ./build_test.d --buildType idf --dubConfig ${{ matrix.dubConfig }} --triple=xtensa-esp32-none-elf --dflags=--mcpu=esp32
+          ./build_test.d \
+            --buildType idf \
+            --dubConfig ${{ matrix.dubConfig }} \
+            --triple=xtensa-${{ matrix.target }}-none-elf \
+            --idfTarget=${{ matrix.target }} \
+            --dflags=--mcpu=${{ matrix.target }}
       - name: Setup Wokwi-CI files
         run: |
           cat > wokwi.toml <<EOF

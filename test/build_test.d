@@ -31,6 +31,9 @@ struct Config
 
     @(NamedArgument.Optional)
     string dflags;
+
+    @(NamedArgument.Optional)
+    string idfTarget = "esp32";
 }
 
 void run(string shellCommand)
@@ -72,6 +75,6 @@ mixin CLI!Config.main!((Config config)
     }
     else
     {
-        "cd idf && idf.py build".run;
+        f!"cd idf && idf.py set-target %s && idf.py build"(config.idfTarget).run;
     }
 });
