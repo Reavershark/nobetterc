@@ -1,2 +1,4 @@
 *.a
-/test
+/test/local/test
+/test/idf/build
+/test/idf/sdkconfig

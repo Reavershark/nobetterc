@@ -1,4 +1,4 @@
-module test.run_tests;
+module nobetterc_test.run_tests_main;
 
 version (unittest)  :  //
 
@@ -78,8 +78,9 @@ string testName(alias test)()
     return name;
 }
 
+// libc main
 extern (C)
-void main()
+int main()
 {
     // dfmt off
     static foreach (enum string moduleString; modules)
@@ -94,4 +95,15 @@ void main()
         }}
     }}
     // dfmt on
+
+    writeln("All unittests succeeded");
+
+    return 0;
+}
+
+// FreeRTOS main
+extern(C)
+void app_main()
+{
+    main;
 }
