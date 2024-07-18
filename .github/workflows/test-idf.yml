@@ -31,7 +31,6 @@ jobs:
           cd ./test/
           ./build_test.d --buildType idf --dubConfig ${{ matrix.dubConfig }} --triple=xtensa-esp32-none-elf --dflags=--mcpu=esp32
       - name: Setup Wokwi-CI files
-        if: ${{ matrix.test }}
         run: |
           cat > wokwi.toml <<EOF
           [wokwi]
