@@ -1,0 +1,48 @@
+name: "Build and run test suite on the esp32 using Wowki-CI"
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - esp32
+          - esp32s2
+          - esp32s3
+        dubConfig:
+          - minimal
+          #- classes
+          #- classes-exceptions
+    runs-on: ubuntu-latest
+    container:
+      image: jmeeuws/esp-dlang
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build test binary
+        run: |
+          export HOME=/root
+          source /opt/esp-idf/export.sh >/dev/null
+          ulimit -n 4096
+          cd ./test/
+          ./build_test.d --buildType idf --dubConfig ${{ matrix.dubConfig }} --triple=xtensa-esp32-none-elf --dflags=--mcpu=esp32
+      - name: Setup Wokwi-CI files
+        if: ${{ matrix.test }}
+        run: |
+          cat > wokwi.toml <<EOF
+          [wokwi]
+          version  = 1
+          elf      = "./test/idf/build/nobetterc_test.elf"
+          firmware = "./test/idf/build/nobetterc_test.bin"
+          EOF
+          cp ./.github/workflows/wokwi/diagram-${{ matrix.target }}.json ./diagram.json
+      - name: Test using Wowki-CI
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          timeout: 5000
+          expect_text: "All unittests succeeded"
