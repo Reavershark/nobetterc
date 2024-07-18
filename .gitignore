@@ -2,3 +2,4 @@
 /test/local/test
 /test/idf/build
 /test/idf/sdkconfig
+/test/idf/sdkconfig.old
