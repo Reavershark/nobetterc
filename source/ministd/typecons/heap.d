@@ -61,6 +61,8 @@ struct UniqueHeap(T)
             => *m_ref;
     }
 
+    alias get this;
+
     void reset() scope
     in (!empty)
     out (; empty)
@@ -114,6 +116,8 @@ struct SharedHeap(T)
     ref inout(T) get() inout return
     in (!empty)
         => m_container.m_uniq.get;
+
+    alias get this;
 
     void reset() scope
     in (!empty)
