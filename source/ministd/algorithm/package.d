@@ -17,7 +17,7 @@ if (Values.length != 0)
     return 0;
 }
 
-void each(alias fn, Range)(scope Range input)
+void each(alias fn, Range)(scope Range input) //
 if (isCallable!fn && isInputRange!Range)
 {
     foreach (ref el; input)

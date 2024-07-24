@@ -7,6 +7,7 @@ import ministd.traits : isRefType;
 
 struct UniqueHeap(T)
 {
+@nogc:
     static if (isRefType!T)
         private alias TRef = T;
     else
@@ -14,8 +15,9 @@ struct UniqueHeap(T)
 
     private TRef m_ref;
 
+scope:
     private pure nothrow
-    this(scope TRef reference) scope
+    this(scope TRef reference)
     out (; !empty)
     {
         m_ref = reference;
@@ -25,12 +27,12 @@ struct UniqueHeap(T)
      * Copy constructor (moves reference)
      * `other` can be `empty`.
      */
-    this(ref scope typeof(this) other) scope
+    this(ref scope typeof(this) other)
     {
         m_ref = other.m_ref.move;
     }
 
-    ~this() scope
+    ~this()
     out (; empty)
     {
         if (!empty)
@@ -38,32 +40,32 @@ struct UniqueHeap(T)
     }
 
     static
-    typeof(this) create(CtorArgs...)(CtorArgs ctorArgs) scope
+    typeof(this) create(CtorArgs...)(CtorArgs ctorArgs)
     out (r; !r.empty)
         => typeof(this)(dalloc!T(ctorArgs));
 
     pure nothrow
-    bool empty() const scope
+    bool empty() const
         => m_ref is null;
 
     static if (isRefType!T)
     {
         pure nothrow
-        inout(T) get() inout return
+        inout(T) get() inout return scope
         in (!empty)
             => m_ref;
     }
     else
     {
         pure nothrow
-        ref inout(T) get() inout return
+        ref inout(T) get() inout return scope
         in (!empty)
             => *m_ref;
     }
 
     alias get this;
 
-    void reset() scope
+    void reset()
     in (!empty)
     out (; empty)
     {
@@ -73,6 +75,7 @@ struct UniqueHeap(T)
 
 struct SharedHeap(T)
 {
+@nogc:
     private struct Container
     {
         UniqueHeap!T m_uniq;
@@ -150,9 +153,10 @@ unittest
 
     struct S
     {
+    nothrow @nogc:
         int m_a = 1;
 
-    nothrow scope:
+    scope:
 
         this(in int a)
         {
@@ -230,10 +234,10 @@ unittest
 
     class C
     {
+    nothrow @nogc:
         int m_a = 1;
 
-    nothrow scope:
-
+    scope:
         this(in int a)
         {
             m_a = a;

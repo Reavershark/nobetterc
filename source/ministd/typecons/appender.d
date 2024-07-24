@@ -8,10 +8,10 @@ import ministd.typecons.dynarray : DynArray;
 
 struct Appender(T)
 {
+nothrow @nogc:
     private DynArray!T m_dynArr;
 
 scope:
-
     private
     this(bool disableFieldCtor)
     {
@@ -22,13 +22,13 @@ scope:
         m_dynArr = other.m_dynArr;
     }
 
-    ref DynArray!T getArray() return
+    ref DynArray!T getArray()
         => m_dynArr;
-    
+
     alias getArray this;
 
     DynArray!T moveArray() return scope
-    out(; m_dynArr.empty)
+    out (; m_dynArr.empty)
         => m_dynArr;
 }
 

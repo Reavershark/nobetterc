@@ -40,11 +40,11 @@ void writefln(string fmt, Args...)(in Args args)
 private
 struct StdoutWriter
 {
+nothrow @nogc:
     static assert(isOutputRange!(typeof(this), char));
     static assert(isOutputRange!(typeof(this), char[]));
 
-static scope nothrow @nogc:
-
+static:
     void put(in char c)
     {
         putchar(c);

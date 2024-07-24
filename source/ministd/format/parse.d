@@ -8,9 +8,9 @@ enum FormatSegment[] parseFormatString(string fmt) = {
     string remaining = fmt;
     while (remaining.length)
         segments ~= parseNextSegment(remaining);
-    
+
     uint nextArgIndex;
-    foreach(ref seg; segments)
+    foreach (ref seg; segments)
         if (seg.isFormatSpec)
             seg.argIndex = nextArgIndex++;
 
@@ -53,7 +53,7 @@ in (remaining.length)
     }
     else // Read normal text until a format specifier or the end
     {
-        foreach(i; 0 .. remaining.length)
+        foreach (i; 0 .. remaining.length)
             if (remaining[i] == '%')
             {
                 FormatSegment seg;

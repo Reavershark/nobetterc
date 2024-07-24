@@ -18,9 +18,11 @@ T* move(T)(ref T* ptr) // lvalue pointer version
     return ptr;
 }
 
+// dfmt off
 pure nothrow
 T* move(T)(T* ptr) // rvalue pointer version
     => ptr;
+// dfmt on
 
 pure nothrow
 T move(T)(ref T instanceRef) // lvalue reference version
@@ -44,9 +46,11 @@ T[] move(T)(ref T[] slice) // lvalue slice version
     return slice;
 }
 
+// dfmt off
 pure nothrow
 T[] move(T)(T[] slice) // rvalue slice version
     => slice;
+// dfmt on
 
 @("move: pointers")
 nothrow

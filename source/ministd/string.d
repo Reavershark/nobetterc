@@ -38,7 +38,6 @@ const nothrow:
     @disable this();
 
 static:
-
     private
     string wrap(in string s, in string colors)
     {

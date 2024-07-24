@@ -9,7 +9,7 @@ public import std.traits : hasElaborateDestructor;
 
 import ministd.meta : Alias, AliasSeq;
 
-@safe @nogc pure nothrow:
+@safe pure nothrow @nogc:
 
 /// Unittest helper
 version (unittest) alias TypeQualifierList = AliasSeq!(Alias, ConstOf, SharedOf, SharedConstOf, ImmutableOf);

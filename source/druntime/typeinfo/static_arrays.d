@@ -11,7 +11,6 @@ mixin template TypeInfo_StaticArrayClassBody()
     size_t len;
 
 override const:
-
     @system
     void destroy(void* p)
     {
@@ -36,7 +35,6 @@ override const:
     }
 
 pure nothrow:
-
     @system
     int compare(in void* p1, in void* p2)
     {

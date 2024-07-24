@@ -2,16 +2,14 @@ module druntime.typeinfo.slices;
 
 version (DRuntimeClassesAndTypeInfo)  :  //
 
-@safe @nogc:
+@safe pure nothrow @nogc:
 
 mixin template TypeInfo_ArrayClassBody()
 {
-@safe @nogc:
-
+@safe pure nothrow @nogc:
     TypeInfo value;
 
-const pure nothrow:
-
+const:
     //
     // Overridden TypeInfo methods
     //
@@ -107,9 +105,8 @@ const pure nothrow:
 
 mixin template TypeInfo_PrimitiveArrayClassBody(T)
 {
-@safe @nogc:
-const pure nothrow:
-
+@safe pure nothrow @nogc:
+const:
     //
     // Overridden TypeInfo methods
     //

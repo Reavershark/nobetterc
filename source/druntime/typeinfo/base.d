@@ -7,7 +7,6 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 mixin template TypeInfoClassBody()
 {
 const @safe @nogc:
-
     //
     // Overridden Object methods
     //
@@ -83,7 +82,7 @@ const @safe @nogc:
      * be returned. For static arrays, this returns the default initializer for
      * a single element of the array, use tsize to get the correct size.
      */
-    @trusted nothrow pure
+    @trusted pure nothrow
     const(void)[] initializer()
     {
         return (cast(const(void)*) null)[0 .. typeof(null).sizeof];

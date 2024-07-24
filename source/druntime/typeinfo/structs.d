@@ -10,7 +10,6 @@ mixin template TypeInfo_StructClassBody()
     import druntime.typeinfo.common : withArgTypes;
 
 @safe @nogc:
-
     enum StructFlags : uint
     {
         hasPointers = 0x1,
@@ -50,7 +49,6 @@ mixin template TypeInfo_StructClassBody()
     immutable(void)* m_RTInfo; // data for precise GC
 
 const:
-
     final override @system
     void destroy(void* p)
     {
@@ -71,7 +69,6 @@ const:
     }
 
 pure nothrow:
-
     //
     // Overridden Object methods
     //

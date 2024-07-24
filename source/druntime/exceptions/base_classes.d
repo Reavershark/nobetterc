@@ -8,7 +8,6 @@ version (DRuntimeExceptions)  :  //
 mixin template Throwable_ClassBody()
 {
 @safe @nogc:
-
     string msg;
     string file;
     size_t line;
@@ -26,7 +25,6 @@ mixin template Throwable_ClassBody()
     }
 
 const:
-
     override nothrow @trusted
     string toString()
     {
@@ -49,8 +47,7 @@ const:
 
 mixin template Exception_ClassBody()
 {
-@safe @nogc pure nothrow:
-
+@safe pure nothrow @nogc:
     this(string msg, string file = __FILE__, size_t line = __LINE__)
     {
         super(msg, file, line);
@@ -59,8 +56,7 @@ mixin template Exception_ClassBody()
 
 mixin template Error_ClassBody()
 {
-@safe @nogc pure nothrow:
-
+@safe pure nothrow @nogc:
     this(string msg, string file = __FILE__, size_t line = __LINE__)
     {
         super(msg, file, line);

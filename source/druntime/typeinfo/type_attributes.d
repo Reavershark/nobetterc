@@ -2,16 +2,14 @@ module druntime.typeinfo.type_attributes;
 
 version (DRuntimeClassesAndTypeInfo)  :  //
 
-@safe @nogc:
+@safe pure nothrow @nogc:
 
 mixin template TypeInfo_ConstClassBody()
 {
-@safe @nogc:
-
+@safe pure nothrow @nogc:
     TypeInfo base;
 
-override const pure nothrow:
-
+override const:
     //
     // Overridden TypeInfo methods
     //
@@ -61,8 +59,8 @@ override const pure nothrow:
 
 mixin template TypeInfo_InvariantClassBody()
 {
-@safe @nogc:
-override const pure nothrow:
+@safe pure nothrow @nogc:
+override const:
     void toString(scope void delegate(in string) @safe pure nothrow @nogc sink)
     {
         sink("immutable");
@@ -74,8 +72,8 @@ override const pure nothrow:
 
 mixin template TypeInfo_InoutClassBody()
 {
-@safe @nogc:
-override const pure nothrow:
+@safe pure nothrow @nogc:
+override const:
     void toString(scope void delegate(in string) @safe pure nothrow @nogc sink)
     {
         sink("inout");
@@ -87,8 +85,8 @@ override const pure nothrow:
 
 mixin template TypeInfo_SharedClassBody()
 {
-@safe @nogc:
-override const pure nothrow:
+@safe pure nothrow @nogc:
+override const:
     void toString(scope void delegate(in string) @safe pure nothrow @nogc sink)
     {
         sink("shared");

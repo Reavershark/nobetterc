@@ -37,8 +37,8 @@ mixin template TypeInfo_ClassClassBody()
     static if (__VERSION__ >= 2_108)
         uint[4] nameSig; /// Unique signature for `name`
 
-const @safe pure nothrow @nogc:
-
+@safe pure nothrow @nogc:
+const:
         //
         // Overridden TypeInfo methods
         //
@@ -122,7 +122,7 @@ const @safe pure nothrow @nogc:
     // find() not implemented
 
     final
-    auto info() return  => this;
+    auto info() return scope => this;
 
     /**
      * Returns true if the class described by `child` derives from or is
@@ -158,17 +158,15 @@ const @safe pure nothrow @nogc:
     }
 
     final
-    auto typeinfo() return  => this;
+    auto typeinfo() return scope => this;
 }
 
 mixin template TypeInfo_InterfaceClassBody()
 {
-@safe @nogc:
-
+@safe pure nothrow @nogc:
     TypeInfo_Class info;
 
-const pure nothrow:
-
+const:
     //
     // Overridden TypeInfo methods
     //

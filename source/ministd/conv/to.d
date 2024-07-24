@@ -47,7 +47,7 @@ unittest
     assert(9.to!(char[]) == "9");
     assert(10.to!(char[]) == "10");
     assert(1234.to!(char[]) == "1234");
-    
+
     assert((-0).to!(char[]) == "0");
     assert((-1).to!(char[]) == "-1");
     assert((-9).to!(char[]) == "-9");

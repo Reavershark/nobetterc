@@ -17,7 +17,7 @@ DynArray!char format(string fmt, Args...)(Args args)
 @("format string int uint")
 unittest
 {
-    assert(format!"1 %s 3 %s"("2", 4) == "1 2 3 4"); 
+    assert(format!"1 %s 3 %s"("2", 4) == "1 2 3 4");
     assert(format!"1 %s 3 %s"("2", 4u) == "1 2 3 4");
     assert(format!"1 %s 3 %s"("2", -4) == "1 2 3 -4");
 }

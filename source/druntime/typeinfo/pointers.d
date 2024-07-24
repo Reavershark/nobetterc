@@ -2,16 +2,14 @@ module druntime.typeinfo.pointers;
 
 version (DRuntimeClassesAndTypeInfo)  :  //
 
-@safe @nogc:
+@safe pure nothrow @nogc:
 
 mixin template TypeInfo_PointerClassBody()
 {
-@safe @nogc:
-
+@safe pure nothrow @nogc:
     TypeInfo m_next;
 
-const pure nothrow:
-
+const:
     //
     // Overridden TypeInfo methods
     //

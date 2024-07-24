@@ -8,10 +8,10 @@ import ministd.traits : isRefType;
 struct UniqueHeapArray(T) //
 if (!isRefType!T)
 {
+@nogc:
     private T[] m_slice;
 
 scope:
-
     private pure nothrow
     this(scope T[] slice)
     out (; !empty)
@@ -58,6 +58,7 @@ scope:
 struct SharedHeapArray(T) //
 if (!isRefType!T)
 {
+@nogc:
     private struct Container
     {
         UniqueHeapArray!T m_uniq;
@@ -66,6 +67,7 @@ if (!isRefType!T)
 
     private Container* m_container;
 
+scope:
     private pure nothrow
     this(scope Container* container) scope
     out (; !empty)

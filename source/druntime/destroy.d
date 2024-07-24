@@ -277,6 +277,7 @@ unittest
         static int destroyed = 0;
         struct C
         {
+        nothrow @nogc:
             string s = "C";
 
             ~this()
@@ -287,6 +288,7 @@ unittest
 
         struct B
         {
+        nothrow @nogc:
             C c;
             string s = "B";
 
@@ -318,9 +320,11 @@ unittest
 {
     static int i = 0;
 
-    static struct S
+    static
+    struct S
     {
-        ~this()
+    nothrow @nogc:
+         ~this()
         {
             i = 42;
         }
@@ -340,7 +344,7 @@ unittest
 
     struct A
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         int i;
 
         ~this()
@@ -372,15 +376,18 @@ unittest
 nothrow
 unittest
 {
-    static struct HasDtor
+    static
+    struct HasDtor
     {
-        ~this()
+    nothrow @nogc:
+         ~this()
         {
             assert(false);
         }
     }
 
-    static struct Owner
+    static
+    struct Owner
     {
         HasDtor* ptr;
         alias ptr this;
@@ -396,7 +403,8 @@ version (none) // TODO: need _adEq2
 nothrow
 unittest
 {
-    static struct Vec2f
+    static
+    struct Vec2f
     {
         float[2] values;
         alias values this;
@@ -414,6 +422,7 @@ unittest
     {
         struct Agg
         {
+        nothrow @nogc:
             static int dtorCount;
 
             int x = 10;
@@ -459,12 +468,13 @@ version (DRuntimeClassesAndTypeInfo) //
 @system
 unittest
 {
-    extern (C++) class CPP
+    extern (C++)
+    class CPP
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         struct Agg
         {
-        @nogc: // need to reapply in @system
+        nothrow @nogc:
             __gshared int dtorCount;
 
             int x = 10;
@@ -550,6 +560,7 @@ unittest
     // class with an `alias this`
     class A
     {
+    nothrow @nogc:
         static int dtorCount;
 
         ~this()
@@ -560,6 +571,7 @@ unittest
 
     class B
     {
+    nothrow @nogc:
         static int dtorCount;
 
         A a;
@@ -603,7 +615,7 @@ unittest
 {
     class C
     {
-    nothrow:
+    nothrow @nogc:
         static int dtorCount = 0;
 
         this()
@@ -629,12 +641,15 @@ unittest
 version (DRuntimeClassesAndTypeInfo) //
 unittest
 {
-    static struct A
+    static
+    struct A
     {
     }
 
-    static class B
+    static
+    class B
     {
+    nothrow @nogc:
         A opCast(T : A)() const
         {
             return A();
@@ -655,6 +670,7 @@ unittest
     {
         class A : I
         {
+        nothrow @nogc:
             string s = "A";
 
             this()
@@ -684,6 +700,7 @@ unittest
 
         class B : I
         {
+        nothrow @nogc:
             string s = "B";
 
             this()
@@ -722,6 +739,7 @@ unittest
     {
         class C
         {
+        nothrow @nogc:
             string s;
 
             this()
@@ -745,14 +763,16 @@ unittest
 @("destroy: make sure destroy!false skips re-initialization")
 unittest
 {
-    static void test(T)(T inst)
+    static
+    void test(T)(T inst)
     {
         inst.x = 123;
         destroy!false(inst);
         assert(inst.x == 123, T.stringof);
     }
 
-    static struct S
+    static
+    struct S
     {
         int x;
     }
@@ -761,12 +781,14 @@ unittest
 
     version (DRuntimeClassesAndTypeInfo)
     {
-        static class C
+        static
+        class C
         {
             int x;
         }
 
-        static extern (C++) class Cpp
+        static extern (C++)
+        class Cpp
         {
             int x;
         }
@@ -792,9 +814,10 @@ unittest
     // Bugzilla 15009
     static string op;
 
-    static struct S
+    static
+    struct S
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         int x;
 
         this(int x)
@@ -847,9 +870,10 @@ version (none) // TODO: need __ArrayDtor
 @system
 unittest
 {
-    static struct S
+    static
+    struct S
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         static dtorCount = 0;
 
         ~this()
@@ -860,7 +884,7 @@ unittest
 
     static interface I
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         ref S[3] getArray();
         ref S[3] getArray();
         alias getArray this;
@@ -868,7 +892,7 @@ unittest
 
     static class C : I
     {
-    @nogc: // need to reapply in @system
+    nothrow @nogc:
         ref S[3] getArray();
         static dtorCount = 0;
 

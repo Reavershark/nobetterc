@@ -2,13 +2,12 @@ module druntime.typeinfo.primitives;
 
 version (DRuntimeClassesAndTypeInfo)  :  //
 
-@safe @nogc:
+@safe pure nothrow @nogc:
 
 mixin template TypeInfo_PrimitiveClassBody(T)
 {
-@safe @nogc:
-override const pure nothrow:
-
+@safe pure nothrow @nogc:
+override const:
     //
     // Overridden TypeInfo methods
     //
@@ -70,14 +69,12 @@ override const pure nothrow:
 
 mixin template TypeInfo_VoidClassBody()
 {
-@safe @nogc:
-const pure nothrow:
-
+@safe pure nothrow @nogc:
+override const:
     //
     // Overridden TypeInfo methods
     //
 
-    override
     void toString(scope void delegate(in string) @safe pure nothrow @nogc sink)
     {
         sink(void.stringof);

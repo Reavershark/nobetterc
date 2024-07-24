@@ -16,7 +16,7 @@ bool __equals(T1, T2)(in T1[] slice1, in T2[] slice2)
     foreach (const i; 0 .. slice1.length)
         if (slice1.at(i) != slice2.at(i))
             return false;
-    
+
     return true;
 }
 
@@ -25,8 +25,7 @@ bool __equals(T1, T2)(in T1[] slice1, in T2[] slice2)
  * casting void to ubyte.
  */
 pragma(inline, true)
-private ref T at(T)(T[] slice, size_t i) @trusted
-        if (!IsOpaqueStruct!T) // exclude opaque structs due to https://issues.dlang.org/show_bug.cgi?id=20959
+private ref T at(T)(T[] slice, size_t i) @trusted if (!IsOpaqueStruct!T) // exclude opaque structs due to https://issues.dlang.org/show_bug.cgi?id=20959
 {
     static if (is(immutable T == immutable void))
         return (cast(ubyte*) slice.ptr)[i];

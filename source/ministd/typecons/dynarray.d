@@ -8,11 +8,11 @@ import ministd.typecons.heap_array : UniqueHeapArray;
 
 struct DynArray(T)
 {
+nothrow @nogc:
     UniqueHeapArray!T m_arr;
     size_t m_used;
 
 scope:
-
     private
     this(bool disableFieldCtor)
     {

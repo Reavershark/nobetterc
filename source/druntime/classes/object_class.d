@@ -7,7 +7,6 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 mixin template ObjectClassBody()
 {
 @safe @nogc:
-
     interface Monitor
     {
         void lock();
@@ -15,7 +14,6 @@ mixin template ObjectClassBody()
     }
 
 const:
-
     static nothrow
     Object factory(string classname)
     {
