@@ -64,7 +64,7 @@ mixin CLI!Config.main!((Config config)
 
     if (config.buildType == BuildType.local)
     {
-        f!"clang %(%s %)"({
+        f!"cc %(%s %)"({
             string[] args;
             args ~= f!"./%s/%s"(config.buildType, libFileName);
             args ~= f!"-o./%s/test"(config.buildType);
