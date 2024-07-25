@@ -8,6 +8,8 @@ import core.volatile : volatileLoad, volatileStore;
 
 @safe nothrow @nogc:
 
+enum bool bitfieldsSupported = __traits(compiles, __traits(isBitfield, null));
+
 private
 template loadStoreTypeOf(T) //
 {
@@ -103,7 +105,26 @@ nothrow @nogc:
     {
         alias M = typeof(mixin("T." ~ member));
         static assert(is(M == struct) || is(M == union) || !isAggregateType!M);
-        return VolatileRef!M(&mixin("m_ref." ~ member));
+        static if (bitfieldsSupported && __traits(isBitfield, mixin("T." ~ member)))
+            return VolatileBitfieldRef!(T, member)(m_ref);
+        else
+            return VolatileRef!M(&mixin("m_ref." ~ member));
+    }
+}
+
+struct VolatileBitfieldRef(T, string member) //
+if (bitfieldsSupported && is(typeof(mixin("T." ~ member))))
+{
+nothrow @nogc:
+    alias M = typeof(mixin("T." ~ member));
+    alias LST = loadStoreTypeOf!M;
+    enum size_t memberBitOffset = mixin("T." ~ member).bitoffsetof;
+
+    private T* m_ref;
+
+    this(T* reference)
+    {
+        m_ref = reference;
     }
 }
 
