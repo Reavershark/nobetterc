@@ -6,7 +6,12 @@ version (DRuntimeClassesAndTypeInfo)  :  //
 
 mixin template TypeInfo_ClassClassBody()
 {
-    enum ClassFlags : uint
+    static if (__VERSION__ >= 2_108)
+        private alias classFlagsType = ushort;
+    else
+        private alias classFlagsType = uint;
+
+    enum ClassFlags : classFlagsType
     {
         isCOMclass = 0x1,
         noPointers = 0x2,
