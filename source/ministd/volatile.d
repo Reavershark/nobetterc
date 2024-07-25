@@ -2,7 +2,7 @@ module ministd.volatile;
 
 import ministd.algorithm : among;
 import ministd.meta : AliasSeq;
-import ministd.traits : isAggregateType, isPointer, Unqual;
+import ministd.traits : isAggregateType, isPointer;
 
 import core.volatile : volatileLoad, volatileStore;
 
@@ -13,9 +13,8 @@ enum bool bitfieldsSupported = __traits(compiles, __traits(isBitfield, null));
 private
 template loadStoreTypeOf(T) //
 {
-    alias UT = Unqual!T;
     static foreach (alias el; AliasSeq!(ubyte, ushort, uint, ulong))
-        static if (UT.sizeof == el.sizeof)
+        static if (T.sizeof == el.sizeof)
             alias loadStoreTypeOf = el;
 
     static assert(is(loadStoreTypeOf), "Incompatible type for volatile load/store");
@@ -89,17 +88,110 @@ scope:
     }
 }
 
+struct VolatileBitfieldRef(T, string member) //
+if (bitfieldsSupported && is(typeof(mixin("T." ~ member))))
+{
+nothrow @nogc:
+    alias M = typeof(mixin("T." ~ member));
+    alias LST = loadStoreTypeOf!M;
+    enum size_t memberByteOffset = mixin("T." ~ member).offsetof;
+    enum size_t memberBitOffset = mixin("T." ~ member).bitoffsetof;
+    enum size_t memberBitWidth = mixin("T." ~ member).bitwidth;
+    static assert(memberBitWidth <= ulong.sizeof * 8);
+
+    private T* m_ref;
+
+scope:
+    this(T* reference)
+    {
+        m_ref = reference;
+    }
+
+    @trusted
+    M get()
+    {
+        ulong rawValue;
+        static if (memberBitWidth != 0)
+        {
+            void* rawPtr = cast(void*) m_ref;
+            rawPtr += memberByteOffset;
+            rawValue = volatileLoad(cast(ulong*) rawPtr);
+            rawValue >>= memberBitOffset;
+            rawValue &= ulong.max >> (ulong.sizeof * 8 - memberBitWidth);
+        }
+        M value = *(cast(M*) cast(void*)&rawValue);
+        return value;
+    }
+
+    alias get this;
+
+    @trusted
+    void set(M arg)
+    {
+        LST rawArg = *(cast(LST*) cast(void*)&value);
+        rawArg <<= memberBitOffset;
+        // todo: set all irrelevant bits of rawArg to 0
+        // & with a mask
+
+        void* rawPtr = cast(void*) m_ref;
+        rawPtr += memberByteOffset;
+        rawValue = volatileLoad(cast(ulong*) rawPtr);
+        // todo: set all relevant bits of rawValue to 0
+        // & with the complementary mask
+
+        rawValue |= rawArg;
+        volatileStore(rawPtr, rawValue);
+    }
+
+    M opAssign(M value)
+    {
+        set(value);
+        return value;
+    }
+
+    M opOpAssign(string op)(M arg)
+    {
+        M value = get;
+        mixin("value " ~ op ~ "= arg;");
+        set(value);
+        return value;
+    }
+
+    auto opUnary(string op)() //
+    if (op.among("-", "+", "~"))
+    {
+        mixin("return " ~ op ~ "get;");
+    }
+
+    ref auto opUnary(string op)() //
+    if (op == "*" && isPointer!M)
+    {
+        return *get;
+    }
+
+    M opUnary(string op)() //
+    if (op.among("++", "--"))
+    {
+        M value = get;
+        mixin(op ~ "value;");
+        set(value);
+        return value;
+    }
+}
+
 struct VolatileRef(T) //
 if (is(T == struct) || is(T == union))
 {
 nothrow @nogc:
     private T* m_ref;
 
+scope:
     this(T* reference)
     {
         m_ref = reference;
     }
 
+    /// Forwards to a Volatile(Bitfield)Ref of a member
     auto opDispatch(string member)() //
     if (is(typeof(mixin("T." ~ member))))
     {
@@ -110,21 +202,12 @@ nothrow @nogc:
         else
             return VolatileRef!M(&mixin("m_ref." ~ member));
     }
-}
 
-struct VolatileBitfieldRef(T, string member) //
-if (bitfieldsSupported && is(typeof(mixin("T." ~ member))))
-{
-nothrow @nogc:
-    alias M = typeof(mixin("T." ~ member));
-    alias LST = loadStoreTypeOf!M;
-    enum size_t memberBitOffset = mixin("T." ~ member).bitoffsetof;
-
-    private T* m_ref;
-
-    this(T* reference)
+    /// Forwards to the opAssign of a Volatile(Bitfield)Ref of a member
+    auto opDispatch(string member, Arg)(Arg arg)
     {
-        m_ref = reference;
+        auto v = opDispatch!member();
+        return v = arg;
     }
 }
 
@@ -214,8 +297,6 @@ unittest
 @("VolatileRef: structs")
 unittest
 {
-    import ministd.traits : ReturnType;
-
     struct S
     {
         struct Embedded
@@ -229,10 +310,40 @@ unittest
 
     S s;
     auto v = VolatileRef!S(&s);
-    static assert(is(ReturnType!(typeof(v.a)) == VolatileRef!int));
-    static assert(is(ReturnType!(typeof(v.e)) == VolatileRef!(S.Embedded)));
-    static assert(is(ReturnType!(typeof(v.e.b)) == VolatileRef!int));
+    static assert(is(typeof(v.a) == VolatileRef!int));
+    static assert(is(typeof(v.e) == VolatileRef!(S.Embedded)));
+    static assert(is(typeof(v.e.b) == VolatileRef!int));
 
     assert(++v.a == 1);
     assert(++v.e.b == 1);
+}
+
+static if (bitfieldsSupported)
+{
+    @("VolatileRef: bitfields")
+    unittest
+    {
+        struct S
+        {
+            uint a;
+            uint b : 1;
+            uint c : 10;
+        }
+
+        S s;
+        auto v = VolatileRef!S(&s);
+
+        static assert(is(typeof(v.a) == VolatileRef!uint));
+        static assert(is(typeof(v.b) == VolatileBitfieldRef!(S, "b")));
+        static assert(is(typeof(v.c) == VolatileBitfieldRef!(S, "c")));
+
+        assert(v.a == 0);
+        assert(v.b == 0);
+        assert(v.c == 0);
+
+        v.c = 0x201;
+        assert(v.a == 0);
+        assert(v.b == 0);
+        assert(v.c == 0x201);
+    }
 }
