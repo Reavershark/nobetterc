@@ -88,7 +88,7 @@ scope:
 }
 
 struct VolatileRef(T) //
-if (is(T == struct))
+if (is(T == struct) || is(T == union))
 {
 nothrow @nogc:
     private T* m_ref;
@@ -102,7 +102,7 @@ nothrow @nogc:
     if (is(typeof(mixin("T." ~ member))))
     {
         alias M = typeof(mixin("T." ~ member));
-        static assert(is(M == struct) || !isAggregateType!M);
+        static assert(is(M == struct) || is(M == union) || !isAggregateType!M);
         return VolatileRef!M(&mixin("m_ref." ~ member));
     }
 }
