@@ -1,6 +1,6 @@
 module ministd.meta;
 
-public import std.meta : Alias, AliasSeq;
+public import std.meta : Alias, AliasSeq, staticMap;
 
 @safe @nogc pure nothrow:
 

@@ -57,6 +57,7 @@ enum string[] modules = [
     "ministd.typecons.dynarray",
     "ministd.typecons.heap",
     "ministd.typecons.heap_array",
+    "ministd.volatile",
 
     "object",
 ];
