@@ -128,19 +128,19 @@ scope:
     @trusted
     void set(M arg)
     {
-        LST rawArg = *(cast(LST*) cast(void*)&value);
+        LST rawArg = *(cast(LST*) cast(void*)&arg);
         rawArg <<= memberBitOffset;
         // todo: set all irrelevant bits of rawArg to 0
         // & with a mask
 
         void* rawPtr = cast(void*) m_ref;
         rawPtr += memberByteOffset;
-        rawValue = volatileLoad(cast(ulong*) rawPtr);
+        ulong rawValue = volatileLoad(cast(ulong*) rawPtr);
         // todo: set all relevant bits of rawValue to 0
         // & with the complementary mask
 
         rawValue |= rawArg;
-        volatileStore(rawPtr, rawValue);
+        volatileStore(cast(ulong*) rawPtr, rawValue);
     }
 
     M opAssign(M value)
