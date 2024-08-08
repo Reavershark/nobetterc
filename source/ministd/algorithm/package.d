@@ -86,6 +86,14 @@ if (isInputRange!Range2 && is(typeof(r1.front == r2.front) : bool))
     }
 }
 
+@trusted pure nothrow pragma(inline, true)
+void swap(T)(scope ref T a, scope ref T b)
+{
+    auto tmp = a;
+    a = b;
+    b = tmp;
+}
+
 auto max(T)(in T[] args...)
 in (args.length >= 1)
 {
