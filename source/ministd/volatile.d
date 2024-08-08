@@ -204,7 +204,7 @@ scope:
     }
 
     /// Forwards to the opAssign of a Volatile(Bitfield)Ref of a member
-    auto opDispatch(string member, Arg)(Arg arg)
+    auto opDispatch(string member, Arg)(Arg arg) return
     {
         auto v = opDispatch!member();
         return v = arg;
