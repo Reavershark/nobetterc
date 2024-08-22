@@ -43,8 +43,12 @@ scope:
 
     pure
     inout(T[]) get() inout
-    in (!empty)
-        => m_arr.get[0 .. m_used];
+    {
+        if (empty)
+            return [];
+        else
+            return m_arr.get[0 .. m_used];
+    }
 
     alias get this;
 
@@ -84,6 +88,12 @@ scope:
     {
         reserve(length);
         m_used += length;
+    }
+
+    void reset()
+    {
+        m_arr.reset;
+        m_used = 0;
     }
 
     private pure
