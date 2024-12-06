@@ -94,6 +94,16 @@ void swap(T)(scope ref T a, scope ref T b)
     b = tmp;
 }
 
+auto min(T)(in T[] args...)
+in (args.length >= 1)
+{
+    size_t minIndex;
+    foreach (i, arg; args[1 .. $])
+        if (arg < args[minIndex])
+            minIndex = i + 1;
+    return args[minIndex];
+}
+
 auto max(T)(in T[] args...)
 in (args.length >= 1)
 {
