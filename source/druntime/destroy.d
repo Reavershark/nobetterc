@@ -86,7 +86,7 @@ if (is(T == interface))
 // ClassDtor type
 version (DRuntimeClassesAndTypeInfo)
 {
-    alias ClassDtor = @system @nogc void function(Object);
+    alias ClassDtor = @system nothrow @nogc void function(Object);
 }
 
 private @trusted
@@ -113,7 +113,7 @@ void destroyStruct(S, size_t n)(ref S[n] arr) // Static array version
 
 // Note: not a template
 version (DRuntimeClassesAndTypeInfo) //
-private @trusted
+private nothrow @trusted
 void destroyClass(void* ptr, bool deterministic = true, bool resetMemory = true)
 {
     if (ptr is null)
@@ -127,6 +127,7 @@ void destroyClass(void* ptr, bool deterministic = true, bool resetMemory = true)
 
     TypeInfo_Class* typeInfoPtr = cast(TypeInfo_Class*)*typeInfoDoublePtr;
 
+    nothrow
     void destroyClassImpl()
     {
         if (deterministic)

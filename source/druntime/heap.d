@@ -32,6 +32,8 @@ T* dalloc(T, CtorArgs...)(CtorArgs ctorArgs) // Struct/union version
 if (T.sizeof && (is(T == struct) || is(T == union)))
 {
     void[] allocatedHeapMem = mallocWrapper(T.sizeof);
+    // TODO: fix broken implicit conversion for ctor args
+    // (Need e.g. dalloc!HttpServer(cast(ushort) 80) now)
     allocatedHeapMem.emplace!T(ctorArgs);
     return cast(T*) allocatedHeapMem.ptr;
 }
