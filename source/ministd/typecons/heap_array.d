@@ -30,8 +30,7 @@ scope:
 
     ~this()
     {
-        if (!empty)
-            reset;
+        reset;
     }
 
     static
@@ -49,9 +48,9 @@ scope:
     alias get this;
 
     void reset()
-    in (!empty)
     {
-        dfree(m_slice.move);
+        if (!empty)
+            dfree(m_slice.move);
     }
 }
 
